@@ -1,51 +1,12 @@
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
-import Header from "@/components/Header";
 import TopicGrid from "@/components/TopicGrid";
 import Button from "@/components/Button";
 import Curriculum from "@/components/Curriculum";
-
-const topics = [
-  { icon: "✔️", topic: "Transtornos de Ansiedade" },
-  { icon: "✔️", topic: "Depressão e Transtornos do Humor" },
-  { icon: "✔️", topic: "Esquizofrenia e Transtornos Psicóticos" },
-  { icon: "✔️", topic: "Transtornos de Personalidade" },
-  { icon: "✔️", topic: "Terapia Cognitivo-Comportamental (TCC)" },
-  { icon: "✔️", topic: "Psicofarmacologia e Medicação" },
-  { icon: "✔️", topic: "Transtornos do Sono e da Vigília" },
-  { icon: "✔️", topic: "Psiquiatria Forense e Legislação" },
-];
-
-const courseLessons = [
-  { title: "Definição e História da Psiquiatria", duration: 690 },
-  {
-    title: "Classificação e Diagnóstico de Transtornos Mentais",
-    duration: 1090,
-  },
-  { title: "Fundamentos de Psicofarmacologia", duration: 870 },
-];
+import { topics, courseLessons } from "./mock";
+import Link from "next/link";
 
 export default async function Index() {
-  const canInitSupabaseClient = () => {
-    try {
-      createClient();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const isSupabaseConnected = canInitSupabaseClient();
-
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center  border-b border-b-foreground/10 h-16 ">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <p className="text-foreground/60">Logo</p>
-          {isSupabaseConnected && <AuthButton />}
-        </div>
-      </nav>
-
       <div className="flex flex-row ">
         <div className="flex-1 flex flex-col max-w-4xl gap-10 p-3">
           <iframe
@@ -74,7 +35,9 @@ export default async function Index() {
           />
         </div>
         <aside className="w-1/4 p-4 border border-gray-300">
-          <Button>Inscreva-se</Button>
+          <Link href="/course">
+            <Button>Ir para o curso</Button>
+          </Link>
           <h2 className="text-xl font-bold my-6">Este curso inclui:</h2>
           <ul>
             <li className="text-sm mb-2">
