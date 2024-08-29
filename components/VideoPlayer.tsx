@@ -57,7 +57,13 @@ const VideoPlayer: React.FC<Props & { lessons: LessonProps[] | null }> = ({
                   className="cursor-pointer"
                   onClick={() => setCurrentLesson(lesson)}
                 >
-                  <h2 className={`text-sm underline`}>{lesson.title}</h2>
+                  <h2
+                    className={`text-sm underline ${
+                      lesson.id === currentLesson?.id ? "font-bold" : ""
+                    }`}
+                  >
+                    {lesson.title}
+                  </h2>
                 </a>
 
                 <p className="text-sm text-gray-500">

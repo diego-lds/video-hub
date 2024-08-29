@@ -2,6 +2,8 @@ import VideoPlayer from "@/components/VideoPlayer";
 import { createClient } from "@/utils/supabase/server";
 import { secondsToMinutes } from "@/utils/formatUtils";
 
+import { lessons } from "@/app/mock";
+
 interface LessonProps {
   id: number;
   created_at: string;
@@ -19,12 +21,11 @@ const Course = async ({ params }: { params: { id: string } | null }) => {
 
   const supabase = createClient();
 
-  const { data: lessons, error } = await supabase
-    .from("lessons")
-    .select("*")
-    .eq("course_id", id)
-    .order("order", { ascending: true });
-  console.log({ lessons });
+  //  const { data: lessons, error } = await supabase
+  //    .from("lessons")
+  //    .select("*")
+  // .eq("course_id", id)
+  // .order("order", { ascending: true });
 
   return (
     <div className="w-full outline">
