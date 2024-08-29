@@ -6,15 +6,9 @@ import Link from "next/link";
 
 export default async function Index() {
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
+    <div className="flex-1 w-full flex flex-col items-center">
       <div className="flex flex-row ">
-        <div className="flex-1 flex flex-col max-w-4xl gap-10 p-3">
-          <iframe
-            width="700"
-            height="415"
-            src="https://www.youtube.com/embed/hk3oRx_Yzaw"
-            title="Introdução do curso"
-          ></iframe>
+        <div className="flex-1 flex flex-col max-w-4xl gap-10">
           <p className="text-3xl font-extrabold lg:text-4xl !leading-tight max-w-xl ">
             Entendendo a Saúde Mental
           </p>
@@ -35,7 +29,7 @@ export default async function Index() {
           />
         </div>
         <aside className="w-1/4 p-4 border border-gray-300">
-          <Link href="/course">
+          <Link href="/course/1">
             <Button>Ir para o curso</Button>
           </Link>
           <h2 className="text-xl font-bold my-6">Este curso inclui:</h2>

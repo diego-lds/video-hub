@@ -17,3 +17,6 @@ export const courseLessons = [
   },
   { title: "Fundamentos de Psicofarmacologia", duration: 870 },
 ];
+
+export const videoUrl =
+  "https://gnayrcyzxnrrcaqjmsky.supabase.co/storage/v1/object/sign/videos/contagem.mp4?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJ2aWRlb3MvY29udGFnZW0ubXA0IiwiaWF0IjoxNzI0Njk0MjY4LCJleHAiOjE3MjUyOTkwNjh9.3MdiAOfxZ6OKTdZUhHxXwTOo2Wh0kA_cXB_U5MRdxDY&t=2024-08-26T17%3A44%3A28.601Z";

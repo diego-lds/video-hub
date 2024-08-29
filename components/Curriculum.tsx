@@ -35,7 +35,7 @@ const Curriculum: React.FC<CurriculumProps> = ({ title, lessons }) => {
           return (
             <li key={index} className="flex p-2 justify-between items-center">
               <h3 className="text-md underline">{lesson.title}</h3>
-              <p className="text-sm font">
+              <p className="text-sm">
                 {hours}h {minutes % 60} min <span className="ml-2">⏰</span>
               </p>
             </li>

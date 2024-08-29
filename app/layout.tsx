@@ -39,7 +39,7 @@ export default function RootLayout({
             {isSupabaseConnected && <AuthButton />}
           </div>
         </nav>
-        <main className="min-h-screen flex flex-col items-center">
+        <main className="min-h-screen mx-32 my-4 flex flex-col items-center">
           {children}
         </main>
       </body>
