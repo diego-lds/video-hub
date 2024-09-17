@@ -1,8 +1,6 @@
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 
-import { createClient } from "@/utils/supabase/server";
-import AuthButton from "@/components/AuthButton";
 import Navbar from "@/components/Navbar";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -14,17 +12,6 @@ export const metadata = {
   title: "Video Hub",
   description: "Plataforma de streaming de vídeos",
 };
-
-const canInitSupabaseClient = () => {
-  try {
-    createClient();
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
-
-const isSupabaseConnected = canInitSupabaseClient();
 
 export default function RootLayout({
   children,
