@@ -1,67 +1,57 @@
-import TopicGrid from "@/components/TopicGrid";
-import Button from "@/components/Button";
-import Curriculum from "@/components/Curriculum";
-import { topics, courseLessons } from "./mock";
+import Image from "next/image";
+
+import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
 export default async function Index() {
-  return (
-    <div className="flex-1 w-full flex flex-col items-center">
-      <div className="flex flex-row ">
-        <div className="flex-1 flex flex-col max-w-4xl gap-10">
-          <p className="text-3xl font-extrabold lg:text-4xl !leading-tight max-w-xl ">
-            Entendendo a Saúde Mental
-          </p>
-          <p>
-            Neste curso de psiquiatria, você irá aprender sobre os fundamentos
-            da saúde mental, incluindo a avaliação, diagnóstico e tratamento de
-            transtornos mentais. Estudará sobre as diferentes condições
-            psiquiátricas, como depressão, ansiedade, esquizofrenia e muito
-            mais. Além disso, você terá a oportunidade de explorar as
-            intervenções terapêuticas e farmacológicas mais eficazes para
-            promover a recuperação e a qualidade de vida dos pacientes.
-          </p>
-          <TopicGrid title="O que você irá aprender" topics={topics} />
+  const supabase = createClient();
 
-          <Curriculum
-            title=" Entendendo a Saúde Mental"
-            lessons={courseLessons}
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("id, title, description, thumbnail")
+    .order("created_at", { ascending: false });
+
+  return (
+    <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-12">
+      <div className="flex flex-col lg:flex-row items-center justify-between">
+        <div className="w-full lg:w-1/2">
+          <h1 className="text-6xl font-bold">Video Hub</h1>
+          <p className="text-lg text-gray-500 mt-3">
+            Crie e disponibilize seus cursos online
+          </p>
+        </div>
+        <div className="w-full lg:w-1/2 flex justify-center mt-12 lg:mt-0">
+          <Image
+            src="/hero.svg"
+            alt="Hero image"
+            width={500}
+            height={500}
+            className="max-w-full h-auto"
           />
         </div>
-        <aside className="w-1/4 p-4 border border-gray-300">
-          <Link href="/course/1">
-            <Button>Ir para o curso</Button>
-          </Link>
-          <h2 className="text-xl font-bold my-6">Este curso inclui:</h2>
-          <ul>
-            <li className="text-sm mb-2">
-              <span className="mr-2">🎥</span>
-              <span>7,5 horas de vídeo sob demanda</span>
-            </li>
-            <li className="text-sm mb-2">
-              <span className="  mr-2">📝</span>
-              <span className="">10 artigos</span>
-            </li>
-            <li className="text-sm mb-2">
-              <span className="  mr-2">📥</span>
-              <span>18 recursos para download</span>
-            </li>
-
-            <li className="text-sm mb-2">
-              <span className="  mr-2">🔑</span>
-              <span>Acesso total vitalício</span>
-            </li>
-            <li className="text-sm mb-2">
-              <span className=" mr-2">📜</span>
-              <span>Certificado de conclusão</span>
-            </li>
-          </ul>
-        </aside>
       </div>
+      <div className="h-[2px] bg-gray-200 mt-12" />
 
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-        <p>This is a footer</p>
-      </footer>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+        {courses?.map((course) => (
+          <Link
+            className="bg-white p-6 rounded-md shadow-lg"
+            key={course.id}
+            href={`/course-details/${course.id}`}
+          >
+            <div className="relative h-48 w-full">
+              <Image
+                src={course.thumbnail || "/placeholder.jpg"}
+                alt={course.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <h2 className="text-2xl font-bold mt-4">{course.title}</h2>
+            <p className="text-lg text-gray-500 mt-2">{course.description}</p>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
