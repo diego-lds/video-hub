@@ -30,16 +30,21 @@ export default async function EditCourse({
   log(user);
 
   return (
-    <div>
-      Edit
+    <div className="w-full">
+      <h1 className="text-3xl">{course?.title}</h1>
       <div>
         {user && (
           <EditCourseForm course={course} lessons={lessons} userId={user?.id} />
         )}
       </div>
-      <Link href={`/admin/new-lesson/${params.id}`} className="border p-1 m-1">
-        + nova aula
-      </Link>
+      <div className="flex justify-center p-2 ">
+        <Link
+          href={`/admin/new-lesson/${params.id}`}
+          className="border p-1 m-1 max-w-lg rounded shadow-lg  bg-emerald-500 text-white"
+        >
+          Criar nova aula
+        </Link>
+      </div>
     </div>
   );
 }

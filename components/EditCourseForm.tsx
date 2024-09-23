@@ -2,6 +2,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/components/Button";
 import Link from "next/link";
 
 interface Course {
@@ -60,7 +61,6 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     }
     getVideos();
   }, [supabase]);
-  console.log(videos);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -92,15 +92,12 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           .eq("id", lesson.id);
         if (error) {
           console.error(error);
-          // Você pode exibir um erro para o usuário
         } else {
           console.log(data);
           router.refresh();
-          // Você pode redirecionar o usuário para uma página de sucesso ou atualizar a lista de lessons
         }
       } catch (error) {
         console.error(error);
-        // Você pode exibir um erro para o usuário
       }
     }
   };
@@ -109,7 +106,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     <div>
       <form
         onSubmit={handleSubmit}
-        className="max-w-md mx-auto p-4 bg-white rounded shadow-md"
+        className="w-full   p-4 bg-white rounded shadow-md"
       >
         <h2 className="text-lg font-bold mb-4">Editar Curso</h2>
         <div className="mb-4">
@@ -142,7 +139,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
       </form>
 
       <div>
-        <ul className=" max-w-md mx-auto p-4 bg-white rounded shadow-md">
+        <ul className=" max-w-full mx-auto p-4 bg-white rounded shadow-md">
           {lessons?.map((lesson) => (
             <li
               key={lesson.id}
@@ -151,12 +148,12 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
               <Link href={`/admin/lesson-details/${lesson.id}`}>
                 {lesson.title}
               </Link>
-              <button
+              <Button
                 onClick={() => handleDeleteLesson(lesson)}
-                className="text-red-500 border p-1 border-red-500"
+                className="text-white rounded-sm p-2 bg-red-700 hover:bg-red-900"
               >
                 Deletar aula
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
