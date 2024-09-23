@@ -17,8 +17,19 @@ export default async function Admin() {
 
   // Verifica se o usuário está autenticado
   if (!user) {
-    // Você pode redirecionar para a página de login aqui ou mostrar uma mensagem
-    return <div>Usuário não autenticado</div>;
+    return (
+      <div className="container mx-auto p-4 flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold mb-4">
+          Você precisa estar logado para acessar essa página
+        </h1>
+        <Link
+          href="/login"
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow"
+        >
+          Ir para a página de login
+        </Link>
+      </div>
+    );
   }
 
   // Busca os cursos criados pelo usuário
@@ -29,38 +40,39 @@ export default async function Admin() {
 
   if (error) {
     console.error("Erro ao buscar cursos:", error.message);
-    return <div>Erro ao carregar os cursos.</div>;
+    return (
+      <div className="container mx-auto p-4 flex flex-col items-center justify-center">
+        <h1 className="text-4xl font-bold mb-4">Erro ao carregar os cursos</h1>
+        <p className="text-xl">{error.message}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col w-full justify-center gap-2">
-      <h1 className="text-2xl">Admin page</h1>
-      <div className="border-b-2 border-b-slate-500">
-        <h3 className="underline text-xl">Minhas informações</h3>
-        <p>ID: {user.id}</p>
-        <p>Email: {user.email}</p>
-      </div>
-      <div>
-        {courses && courses.length > 0 ? (
-          <ul>
-            <div className="flex justify-between items-center">
-              <h3 className="underline text-xl">Meus Cursos</h3>
-              <Link href="/admin/new-course" className="border">
-                + novo curso
-              </Link>
-            </div>
-            {courses.map((course: Course) => (
-              <li className="list-disc" key={course.id}>
-                <Link href={`/admin/course-details/${course.id}`}>
-                  {course.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Nenhum curso encontrado.</p>
-        )}
-      </div>
+    <div className="container p-2 flex flex-col">
+      <h1 className="text-4xl font-bold mb-4">Meus cursos</h1>
+      <ul className="list-none p-2 border border-gray-300 rounded-sm mt-4">
+        {courses.map((course: Course) => (
+          <li
+            key={course.id}
+            className="mb-2 ml-2 border-b p-2 border-gray-300 hover:bg-gray-200"
+          >
+            <Link
+              href={`/admin/course-details/${course.id}`}
+              className="text-md font-semibold"
+            >
+              <span className="mr-3">📚</span>
+              {course.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <Link
+        href="/admin/new-course"
+        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded text-center shadow mt-4"
+      >
+        + novo curso
+      </Link>
     </div>
   );
 }

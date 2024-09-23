@@ -17,7 +17,7 @@ const TopicGrid: React.FC<TopicGridProps> = ({ title, topics }) => {
       <div className="grid grid-cols-2 gap-4">
         {topics.map((topic, index) => (
           <div key={index} className="flex items-center">
-            <span className="mr-2">{topic.icon}</span>
+            <span className="mr-2">✅</span>
             <span>{topic.topic}</span>
           </div>
         ))}
