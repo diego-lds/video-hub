@@ -23,6 +23,10 @@ interface Lesson {
   course_id: number;
 }
 
+interface Topic {
+  topic: string;
+}
+
 interface FileObject {
   name: string;
   id: null | string;
@@ -34,20 +38,24 @@ interface FileObject {
 
 interface EditCourseFormProps {
   course: Course;
-  lessons: Lesson[];
+  lessons: null | Lesson[];
   userId: string;
+  topics: null | Topic[];
 }
 
 const EditCourseForm: React.FC<EditCourseFormProps> = ({
   course,
   lessons,
   userId,
+  topics: initialTopics,
 }) => {
   const supabase = createClient();
   const router = useRouter();
 
   const [title, setTitle] = useState(course.title);
   const [videos, setVideos] = useState<FileObject[]>([]);
+  const [topics, setTopics] = useState<Topic[]>(initialTopics ?? []);
+  const [newTopic, setNewTopic] = useState("");
 
   const [description, setDescription] = useState(course.description);
 
@@ -74,7 +82,6 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
         console.error(error);
       } else {
         alert("Curso atualizado com sucesso!");
-        router.push("/admin");
       }
     } catch (error) {
       console.error(error);
@@ -99,6 +106,42 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
       } catch (error) {
         console.error(error);
       }
+    }
+  };
+
+  const handleAddTopic = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (newTopic) {
+      try {
+        const { data, error } = await supabase
+          .from("learningTopics")
+          .insert([{ course_id: course.id, topic: newTopic }]);
+        if (error) {
+          console.error(error);
+        } else {
+          setTopics([...topics, { topic: newTopic }]);
+          setNewTopic("");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const handleDeleteTopic = async (topic: Topic) => {
+    try {
+      const { data, error } = await supabase
+        .from("learningTopics")
+        .delete()
+        .eq("course_id", course.id)
+        .eq("topic", topic.topic);
+      if (error) {
+        console.error(error);
+      } else {
+        setTopics(topics.filter((t) => t.topic !== topic.topic));
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -129,13 +172,49 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
             onChange={(event) => setDescription(event.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Atualizar Descrilção e título
+          </button>
         </div>
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Atualizar Curso
-        </button>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Tópicos de aprendizagem:
+          </label>
+          <ul className="flex flex-col justify-between">
+            {topics.map((topic) => (
+              <li
+                key={topic.topic}
+                className="flex max-w-lg justify-between items-center p-1 m-1 bg-gray-200"
+              >
+                {topic.topic}
+                <a
+                  onClick={() => handleDeleteTopic(topic)}
+                  className="ml-2 cursor-pointer"
+                >
+                  ❌️
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div className="flex gap-5">
+            <input
+              type="text"
+              value={newTopic}
+              onChange={(event) => setNewTopic(event.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              placeholder="Adicionar tópico"
+            />
+            <Button
+              onClick={handleAddTopic}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Adicionar
+            </Button>
+          </div>
+        </div>
       </form>
 
       <div>
@@ -161,5 +240,4 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     </div>
   );
 };
-
 export default EditCourseForm;

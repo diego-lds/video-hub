@@ -23,18 +23,28 @@ export default async function EditCourse({
     .select("*")
     .eq("course_id", params.id);
 
+  const { data: topics, error: topicsError } = await supabase
+    .from("learningTopics")
+    .select("topic")
+    .eq("course_id", params.id);
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  log(user);
+  log(topics);
 
   return (
     <div className="w-full">
       <h1 className="text-3xl">{course?.title}</h1>
       <div>
         {user && (
-          <EditCourseForm course={course} lessons={lessons} userId={user?.id} />
+          <EditCourseForm
+            course={course}
+            lessons={lessons}
+            userId={user?.id}
+            topics={topics}
+          />
         )}
       </div>
       <div className="flex justify-center p-2 ">
