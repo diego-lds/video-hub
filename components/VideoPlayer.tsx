@@ -1,6 +1,7 @@
 "use client";
 
 import { secondsToMinutes } from "@/utils/formatUtils";
+import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 
@@ -13,7 +14,7 @@ interface LessonProps {
   created_at: string;
   title: string;
   description: string;
-  url: string;
+  video_path: string;
   order: number;
   duration: number;
   thumbnail: string | null;
@@ -38,11 +39,18 @@ const VideoPlayer: React.FC<Props & { lessons: LessonProps[] | null }> = ({
     return null; // Não renderiza nada até que o componente esteja no cliente
   }
 
+  const supabase = createClient();
+  const { data, error } = supabase.storage
+    .from("videos")
+    .getPublicUrl(currentLesson?.video_path);
+
+  console.log({ currentLesson });
+
   return (
     <>
       <main className="flex ">
         <ReactPlayer
-          url={currentLesson?.url}
+          url={data?.publicUrl}
           controls={controls}
           playing={false}
           height="100%"

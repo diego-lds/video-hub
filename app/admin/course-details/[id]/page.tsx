@@ -24,7 +24,7 @@ export default async function EditCourse({
     .eq("course_id", params.id);
 
   const { data: topics, error: topicsError } = await supabase
-    .from("learningTopics")
+    .from("learning_topics")
     .select("topic")
     .eq("course_id", params.id);
 
@@ -32,7 +32,11 @@ export default async function EditCourse({
     data: { user },
   } = await supabase.auth.getUser();
 
-  log(topics);
+  const { data: videos, error } = await supabase.storage
+    .from("videos")
+    .list(user?.id + "/" + course);
+
+  console.log({ videos }, 1111);
 
   return (
     <div className="w-full">

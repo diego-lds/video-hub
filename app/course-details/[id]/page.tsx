@@ -27,11 +27,9 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
     .order("order", { ascending: true });
 
   const { data: learningTopics, error: topicError } = await supabase
-    .from("learningTopics")
+    .from("learning_topics")
     .select("topic")
     .eq("course_id", course.id);
-
-  console.log(topicError, learningTopics);
 
   return (
     <div className="flex-1 w-full flex flex-col items-center">

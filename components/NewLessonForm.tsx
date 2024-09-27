@@ -8,8 +8,6 @@ export default function NewLessonForm({ courseId, user }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState<File | null>(null);
-  const [videoPath, setVideoPath] = useState<string | null>(null);
-  const [videoId, setVideoId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | undefined | null>(null);
   const [loading, setLoading] = useState(false);
@@ -23,27 +21,49 @@ export default function NewLessonForm({ courseId, user }) {
 
   const handleUpload = async () => {
     if (!video) return;
+
     setUploading(true);
-    try {
-      const supabase = createClient();
-      const { data: uploaded, error } = await supabase.storage
-        .from("videos")
-        .upload(user?.id + "/" + courseId + "/" + video.name, video);
-      if (error) {
-        setError(error.message);
-      } else {
-        setVideoId(uploaded?.id);
-        console.log("Vídeo carregado com sucesso!");
-      }
-    } catch (error) {
+    const supabase = createClient();
+    // f309aa50-a343-472c-8da5-13b137e62f41/1/aula-8.mp4
+    const fileName = user?.id + "/" + courseId + "/" + video.name;
+
+    const { data: uploadResponse, error } = await supabase.storage
+      .from("videos")
+      .upload(fileName, video, { upsert: true });
+
+    console.log({ uploadResponse });
+
+    const { data: newLesson, error: errorLesson } = await supabase
+      .from("lessons")
+      .insert([
+        {
+          title,
+          description,
+          course_id: courseId,
+          video_path: uploadResponse?.path,
+        },
+      ]);
+    setLoading(false);
+    if (errorLesson) {
+      console.error("Error creating lesson:", errorLesson.message);
+      alert("Failed to create lesson.");
+    } else {
+      setSuccessMessage("lesson created successfully!");
+      setTitle("");
+      setDescription("");
+      router.push("/admin/course-details/" + courseId);
+    }
+
+    if (error) {
       setError(error.message);
-    } finally {
-      setUploading(false);
+    } else {
+      console.log("Video carregado com sucesso!");
     }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     if (!video) return;
+    e.preventDefault();
 
     setLoading(true);
     const supabase = createClient();
@@ -52,33 +72,7 @@ export default function NewLessonForm({ courseId, user }) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { data: uploadedVideo, error: uploadError } = await supabase.storage
-      .from("videos")
-      .upload(user?.id + "/" + courseId + "/" + video.name, video);
-
-    if (uploadError) {
-      console.error("Error uploading video:", uploadError);
-      return;
-    }
-
-    const { data, error } = await supabase.from("lessons").insert([
-      {
-        title,
-        description,
-        course_id: courseId,
-        videoId: uploadedVideo?.id,
-      },
-    ]);
-    setLoading(false);
-    if (error) {
-      console.error("Error creating lesson:", error.message);
-      alert("Failed to create lesson.");
-    } else {
-      setSuccessMessage("lesson created successfully!");
-      setTitle("");
-      setDescription("");
-      router.push("/admin/course-details/" + courseId);
-    }
+    await handleUpload();
   };
 
   return (
