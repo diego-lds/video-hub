@@ -17,59 +17,42 @@ interface LessonProps {
   course_id: number;
 }
 
-// {
-//   lessons: [
-//     {
-//       id: 33,
-//       created_at: '2024-10-02T23:53:54.711851+00:00',
-//       title: '161616',
-//       description: '16161616',
-//       video_id: 'f309aa50-a343-472c-8da5-13b137e62f41/16/aula-7.mp4',
-//       order: null,
-//       duration: null,
-//       course_id: 16
-//     }
-//   ]
-// }
-
 interface VideoPlayerProps {
   lessons: LessonProps[] | null;
   courseId: string;
   user: any;
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({
-  lessons,
-  courseId,
-  user,
-}) => {
-  const [isClient, setIsClient] = useState(false);
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
   const [currentLesson, setCurrentLesson] = useState<LessonProps | null>(null);
   const [url, setUrl] = useState<string | null>(null);
 
   const supabase = createClient();
   useEffect(() => {
-    setCurrentLesson(lessons?.[0] || null);
+    const firstLesson = lessons?.[0] || null;
+
+    setCurrentLesson(firstLesson);
+
+    const { data } = supabase.storage
+      .from("public-videos")
+      .getPublicUrl(firstLesson?.video_path || "");
+
+    setUrl(data.publicUrl);
   }, []);
 
   const handleClick = async (lesson: LessonProps) => {
-    const { data, error } = await supabase.storage
+    const { data } = supabase.storage
       .from("public-videos")
       .getPublicUrl(lesson?.video_path || "");
 
-    if (error) {
-      console.error(error);
-    } else {
-      setUrl(data.publicUrl);
-    }
+    setUrl(data.publicUrl);
+    setCurrentLesson(lesson);
   };
-
-  console.log(url);
 
   return (
     <>
-      {currentLesson && <h1>{currentLesson.title}</h1>}
-      <main className="flex ">
+      {currentLesson && <h1 className="text-3xl">{currentLesson.title}</h1>}
+      <main className="flex flex-col">
         {url && (
           <ReactPlayer
             url={url}
@@ -80,12 +63,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             style={{ aspectRatio: "16/9", height: "480px" }}
           />
         )}
-        <aside className="p-1 w-64">
+        <div>
           <ul>
             {lessons?.map((lesson, index) => (
               <li
                 key={index}
-                className={`flex flex-col rounded-md border border-gray-200 p-2 ${
+                className={`flex flex-col  border border-gray-200 p-2 ${
                   currentLesson?.id === lesson.id ? "border-gray-500" : ""
                 }`}
                 onClick={() => handleClick(lesson)}
@@ -94,12 +77,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   <span className="text-sm text-red-500 border border-red-300 cursor-pointer px-1 select-none">
                     ▶️
                   </span>
-                  <span className="text-lg font-bold">{lesson.title}</span>
+                  <span className="text-sm font-bold">{lesson.title}</span>
                 </p>
               </li>
             ))}
           </ul>
-        </aside>
+        </div>
       </main>
     </>
   );
