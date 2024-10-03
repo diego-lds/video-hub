@@ -3,13 +3,14 @@ import { createClient } from "@/utils/supabase/client";
 import Button from "@/components/Button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import VideoPlayer from "./VideoPlayer";
 
 interface LessonProps {
   id: number;
   created_at: string;
   title: string;
   description: string;
-  videoId: string;
+  vide_path: string;
   order: number;
   duration: number;
   thumbnail: string | null;
@@ -21,7 +22,7 @@ interface LessonProps {
   created_at: string;
   title: string;
   description: string;
-  videoId: string;
+  video_path: string;
   order: number;
   duration: number;
   thumbnail: string | null;
@@ -50,8 +51,13 @@ const LessonForm = ({ lesson }: LessonFormProps) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Aqui você pode fazer o que quiser com a lesson, como salvar no servidor
-    console.log(localLesson);
   };
+  const supabase = createClient();
+  const { data: video } = supabase.storage
+    .from("public-videos")
+    .getPublicUrl("f309aa50-a343-472c-8da5-13b137e62f41/1/aula-7.mp4");
+
+  console.log(video);
 
   return (
     <form

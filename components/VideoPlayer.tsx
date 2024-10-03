@@ -5,88 +5,102 @@ import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 
-interface Props {
-  controls: boolean;
-}
-
 interface LessonProps {
   id: number;
   created_at: string;
   title: string;
   description: string;
-  video_path: string;
+  video_path: string | null;
   order: number;
   duration: number;
   thumbnail: string | null;
   course_id: number;
 }
 
-const VideoPlayer: React.FC<Props & { lessons: LessonProps[] | null }> = ({
-  controls = true,
+// {
+//   lessons: [
+//     {
+//       id: 33,
+//       created_at: '2024-10-02T23:53:54.711851+00:00',
+//       title: '161616',
+//       description: '16161616',
+//       video_id: 'f309aa50-a343-472c-8da5-13b137e62f41/16/aula-7.mp4',
+//       order: null,
+//       duration: null,
+//       course_id: 16
+//     }
+//   ]
+// }
+
+interface VideoPlayerProps {
+  lessons: LessonProps[] | null;
+  courseId: string;
+  user: any;
+}
+
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
   lessons,
+  courseId,
+  user,
 }) => {
   const [isClient, setIsClient] = useState(false);
   const [currentLesson, setCurrentLesson] = useState<LessonProps | null>(null);
-
-  useEffect(() => {
-    setIsClient(true);
-    if (lessons?.length) {
-      setCurrentLesson(lessons[0]);
-    }
-  }, [lessons]);
-
-  if (!isClient) {
-    return null; // Não renderiza nada até que o componente esteja no cliente
-  }
+  const [url, setUrl] = useState<string | null>(null);
 
   const supabase = createClient();
-  const { data, error } = supabase.storage
-    .from("videos")
-    .getPublicUrl(currentLesson?.video_path);
+  useEffect(() => {
+    setCurrentLesson(lessons?.[0] || null);
+  }, []);
 
-  console.log({ currentLesson });
+  const handleClick = async (lesson: LessonProps) => {
+    const { data, error } = await supabase.storage
+      .from("public-videos")
+      .getPublicUrl(lesson?.video_path || "");
+
+    if (error) {
+      console.error(error);
+    } else {
+      setUrl(data.publicUrl);
+    }
+  };
+
+  console.log(url);
 
   return (
     <>
+      {currentLesson && <h1>{currentLesson.title}</h1>}
       <main className="flex ">
-        <ReactPlayer
-          url={data?.publicUrl}
-          controls={controls}
-          playing={false}
-          height="100%"
-          width="100%"
-          style={{ aspectRatio: "16/9", height: "480px" }}
-        />
+        {url && (
+          <ReactPlayer
+            url={url}
+            controls={true}
+            playing={false}
+            height="100%"
+            width="100%"
+            style={{ aspectRatio: "16/9", height: "480px" }}
+          />
+        )}
         <aside className="p-1 w-64">
           <ul>
-            {lessons?.map((lesson) => (
-              <li key={lesson.id}>
-                <a
-                  className="cursor-pointer"
-                  onClick={() => setCurrentLesson(lesson)}
-                >
-                  <h2
-                    className={`text-sm underline ${
-                      lesson.id === currentLesson?.id ? "font-bold" : ""
-                    }`}
-                  >
-                    {lesson.title}
-                  </h2>
-                </a>
-
-                <p className="text-sm text-gray-500">
-                  📽️ {secondsToMinutes(lesson.duration)}m
+            {lessons?.map((lesson, index) => (
+              <li
+                key={index}
+                className={`flex flex-col rounded-md border border-gray-200 p-2 ${
+                  currentLesson?.id === lesson.id ? "border-gray-500" : ""
+                }`}
+                onClick={() => handleClick(lesson)}
+              >
+                <p className="flex items-center gap-2">
+                  <span className="text-sm text-red-500 border border-red-300 cursor-pointer px-1 select-none">
+                    ▶️
+                  </span>
+                  <span className="text-lg font-bold">{lesson.title}</span>
                 </p>
               </li>
             ))}
           </ul>
         </aside>
       </main>
-      <footer className="py-8">
-        <h1 className="text-2xl font-bold">{currentLesson?.title}</h1>
-
-        <p>{currentLesson?.description}</p>
-      </footer>
     </>
   );
 };

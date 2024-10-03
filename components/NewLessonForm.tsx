@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import VideoUpload from "./VideoUpload";
 export default function NewLessonForm({ courseId, user }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -24,40 +23,42 @@ export default function NewLessonForm({ courseId, user }) {
 
     setUploading(true);
     const supabase = createClient();
-    // f309aa50-a343-472c-8da5-13b137e62f41/1/aula-8.mp4
-    const fileName = user?.id + "/" + courseId + "/" + video.name;
+    const filePath = user?.id + "/" + courseId + "/" + video.name;
 
-    const { data: uploadResponse, error } = await supabase.storage
-      .from("videos")
-      .upload(fileName, video, { upsert: true });
+    const { data: uploadResponse, error: uploadError } = await supabase.storage
+      .from("public-videos")
+      .upload(filePath, video, { upsert: true });
 
-    console.log({ uploadResponse });
+    console.log({ uploadResponse, title, description });
 
-    const { data: newLesson, error: errorLesson } = await supabase
-      .from("lessons")
-      .insert([
-        {
-          title,
-          description,
-          course_id: courseId,
-          video_path: uploadResponse?.path,
-        },
-      ]);
-    setLoading(false);
-    if (errorLesson) {
-      console.error("Error creating lesson:", errorLesson.message);
-      alert("Failed to create lesson.");
-    } else {
-      setSuccessMessage("lesson created successfully!");
-      setTitle("");
-      setDescription("");
-      router.push("/admin/course-details/" + courseId);
-    }
+    if (!uploadError) {
+      const { data: newLesson, error: newLessonErr } = await supabase
+        .from("lessons")
+        .insert([
+          {
+            title,
+            description,
+            course_id: courseId,
+            video_path: uploadResponse.path,
+          },
+        ]);
+      setLoading(false);
+      if (newLessonErr) {
+        console.error("Error creating lesson:", newLessonErr.message);
+        alert("Failed to create lesson.");
+      } else {
+        console.log({ newLesson });
+        setSuccessMessage("lesson created successfully!");
+        setTitle("");
+        setDescription("");
+        router.push("/admin/course-details/" + courseId);
+      }
 
-    if (error) {
-      setError(error.message);
-    } else {
-      console.log("Video carregado com sucesso!");
+      if (newLessonErr) {
+        setError(newLessonErr.message);
+      } else {
+        console.log("Video carregado com sucesso!");
+      }
     }
   };
 

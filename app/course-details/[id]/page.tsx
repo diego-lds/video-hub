@@ -1,7 +1,8 @@
-import { courseLessons, lessons, topics } from "@/app/mock";
 import Button from "@/components/Button";
+
 import Curriculum from "@/components/Curriculum";
 import TopicGrid from "@/components/TopicGrid";
+import VideoPlayer from "@/components/VideoPlayer";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
@@ -10,9 +11,13 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
 
   const supabase = createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data: course, error } = await supabase
     .from("courses")
-    .select("*")
+    .select("id, title, description")
     .eq("id", id)
     .single();
 
@@ -20,9 +25,10 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
     throw error;
   }
 
-  const { data: courseLessons } = await supabase
+  const { data: lessons } = await supabase
     .from("lessons")
     .select("*")
+    // .select("id, title, description, video_path")
     .eq("course_id", course.id)
     .order("order", { ascending: true });
 
@@ -39,38 +45,24 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
             {course.title}
           </p>
           <p>{course.description}</p>
-          <TopicGrid title="O que você irá aprender" topics={learningTopics} />
 
-          <Curriculum title={course.title} lessons={courseLessons} />
+          <div>
+            <VideoPlayer lessons={lessons} courseId={id} user={user} />
+          </div>
+
+          <ul className="space-y-1"></ul>
+          {/* {learningTopics && (
+            <TopicGrid
+              title="O que voc  ir  aprender"
+              topics={learningTopics}
+            />
+          )} */}
         </div>
         <aside className="w-1/4 p-4 border border-gray-300">
           <Link href={`/course/${course.id}`}>
             <Button>Ir para o curso</Button>
           </Link>
           <h2 className="text-xl font-bold my-6">Este curso inclui:</h2>
-          <ul>
-            <li className="text-sm mb-2">
-              <span className="mr-2">🎥</span>
-              <span>{course.video_hours} horas de vídeo sob demanda</span>
-            </li>
-            <li className="text-sm mb-2">
-              <span className="  mr-2">📝</span>
-              <span className="">{course.articles} artigos</span>
-            </li>
-            <li className="text-sm mb-2">
-              <span className="  mr-2">📥</span>
-              <span>{course.resources} recursos para download</span>
-            </li>
-
-            <li className="text-sm mb-2">
-              <span className="  mr-2">🔑</span>
-              <span>Acesso total vitalício</span>
-            </li>
-            <li className="text-sm mb-2">
-              <span className=" mr-2">📜</span>
-              <span>Certificado de conclusão</span>
-            </li>
-          </ul>
         </aside>
       </div>
     </div>

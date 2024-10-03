@@ -1,4 +1,5 @@
 import NewLessonForm from "@/components/NewLessonForm";
+import VideoUploader from "@/components/VideoUploader";
 import { createClient } from "@/utils/supabase/server";
 
 const NewLesson = async ({ params }: { params: { id: string } | null }) => {
@@ -11,10 +12,11 @@ const NewLesson = async ({ params }: { params: { id: string } | null }) => {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <h1>New Lesson</h1>
       <h2>From course {id}</h2>
       <NewLessonForm courseId={id} user={user} />
+      <VideoUploader courseId={id} user={user} />
     </div>
   );
 };

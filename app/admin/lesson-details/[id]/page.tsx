@@ -1,5 +1,7 @@
 import EditLessonForm from "@/components/EditLessonForm";
+import VideoPlayer from "@/components/VideoPlayer";
 import { createClient } from "@/utils/supabase/server";
+import ReactPlayer from "react-player";
 
 export default async function LessonDetails({
   params,
@@ -11,8 +13,7 @@ export default async function LessonDetails({
   const { data: lesson, error: courseError } = await supabase
     .from("lessons")
     .select("*")
-    .eq("id", params.id)
-    .single();
+    .eq("id", params.id);
 
   if (courseError) {
     throw courseError;
@@ -24,15 +25,7 @@ export default async function LessonDetails({
 
   const path = user?.id + "/" + lesson.course_id + "/" + lesson.videoId;
 
-  const { data: video, error: videoError } = supabase.storage
-    .from("videos")
-    .getPublicUrl(path);
-
-  if (videoError) {
-    throw videoError;
-  }
-
-  console.log(lesson, video);
+  console.log(lesson);
 
   return (
     <div className="max-w-4xl p-4 bg-white rounded shadow-md">
