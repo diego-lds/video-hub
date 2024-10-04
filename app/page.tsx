@@ -8,7 +8,7 @@ export default async function Index() {
 
   const { data: courses } = await supabase
     .from("courses")
-    .select("id, title, description, thumbnail")
+    .select("id, title, description, image_path")
     .order("created_at", { ascending: false });
 
   return (
@@ -41,7 +41,7 @@ export default async function Index() {
           >
             <div className="relative h-48 w-full">
               <Image
-                src={course.thumbnail || "/placeholder.jpg"}
+                src={course.image_path || "/placeholder.jpg"}
                 alt={course.title}
                 fill
                 className="object-cover"

@@ -56,7 +56,10 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
   const [videos, setVideos] = useState<FileObject[]>([]);
   const [topics, setTopics] = useState<Topic[]>(initialTopics ?? []);
   const [newTopic, setNewTopic] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePath, setImagePath] = useState<File | null>(null);
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [description, setDescription] = useState(course.description);
 
   useEffect(() => {
@@ -72,19 +75,54 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    try {
-      const { data, error } = await supabase
-        .from("courses")
-        .update({ title, description })
-        .eq("id", course.id);
+    if (selectedImage) {
+      const { data, error } = await supabase.storage
+        .from("thumbnails")
+        .upload(
+          userId + "/" + course.id + "/" + selectedImage.name,
+          selectedImage,
+          { upsert: true }
+        );
 
-      if (error) {
-        console.error(error);
-      } else {
-        alert("Curso atualizado com sucesso!");
+      if (error) console.error(error);
+      else {
+        const { data: image, error: imageError } = await supabase.storage
+          .from("thumbnails")
+          .getPublicUrl(userId + "/" + course.id + "/" + selectedImage.name);
+
+        if (imageError) console.error(imageError);
+        else {
+          try {
+            const { data: updateData, error: updateError } = await supabase
+              .from("courses")
+              .update({ title, description, image_path: image.publicUrl })
+              .eq("id", course.id);
+
+            if (updateError) {
+              console.error(updateError);
+            } else {
+              alert("Curso atualizado com sucesso!");
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
       }
-    } catch (error) {
-      console.error(error);
+    } else {
+      try {
+        const { data, error } = await supabase
+          .from("courses")
+          .update({ title, description })
+          .eq("id", course.id);
+
+        if (error) {
+          console.error(error);
+        } else {
+          alert("Curso atualizado com sucesso!");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
 
@@ -145,6 +183,18 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     }
   };
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div>
       <form
@@ -172,11 +222,28 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
             onChange={(event) => setDescription(event.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Foto de capa:
+          </label>
+          <input
+            type="file"
+            onChange={handleImageChange}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+          {previewImage && (
+            <img
+              src={previewImage}
+              alt="Preview image"
+              className="w-64 h-auto"
+            />
+          )}
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Atualizar Descrilção e título
+            Atualizar Descrição e título
           </button>
         </div>
         <div className="mb-4">
