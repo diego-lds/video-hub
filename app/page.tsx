@@ -15,9 +15,15 @@ export default async function Index() {
     <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-12">
       <div className="flex flex-col lg:flex-row items-center justify-between">
         <div className="w-full lg:w-1/2">
-          <h1 className="text-6xl font-bold">Video Hub</h1>
-          <p className="text-lg text-gray-500 mt-3">
-            Crie e disponibilize seus cursos online
+          <h1 className="text-7xl font-bold text-emerald-500 ">Video Hub</h1>
+          <p className="text-xl  my-5 uppercase">
+            Crie e disponibilize seus cursos online com facilidade!
+          </p>
+          <p className="font-light">
+            Transforme seu conhecimento em uma fonte de renda, compartilhando
+            suas habilidades com o mundo. Nossa plataforma oferece todas as
+            ferramentas necessárias para que você possa desenvolver, hospedar e
+            vender seus cursos online, sem complicações técnicas.
           </p>
         </div>
         <div className="w-full lg:w-1/2 flex justify-center mt-12 lg:mt-0">
@@ -47,8 +53,12 @@ export default async function Index() {
                 className="object-cover"
               />
             </div>
-            <h2 className="text-2xl font-bold mt-4">{course.title}</h2>
-            <p className="text-lg text-gray-500 mt-2">{course.description}</p>
+            <div className="h-32">
+              <h2 className="text-2xl font-bold mt-4">{course.title}</h2>
+              <p className="line-clamp-3 text-base  text-gray-500 mt-3">
+                {course.description}
+              </p>
+            </div>
           </Link>
         ))}
       </div>
