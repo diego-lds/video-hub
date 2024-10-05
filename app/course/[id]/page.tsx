@@ -42,8 +42,7 @@ const Course = async ({ params }: { params: { id: string } | null }) => {
     .eq("course_id", course.id);
 
   return (
-    <div className="w-full outline">
-      SSS
+    <div className="w-full ">
       <VideoPlayer url={URL} />
     </div>
   );

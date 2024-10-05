@@ -12,10 +12,11 @@ export default async function Index() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-12">
+    <div className="container mx-auto">
       <div className="flex flex-col lg:flex-row items-center justify-between">
         <div className="w-full lg:w-1/2">
-          <h1 className="text-7xl font-bold text-emerald-500 ">Video Hub</h1>
+          <Image width={474} height={125} src="/logo.png" alt="Logo" />
+
           <p className="text-xl  my-5 uppercase">
             Crie e disponibilize seus cursos online com facilidade!
           </p>
@@ -50,7 +51,7 @@ export default async function Index() {
                 src={course.image_path || "/placeholder.jpg"}
                 alt={course.title}
                 fill
-                className="object-cover"
+                className="object-cover "
               />
             </div>
             <div className="h-32">

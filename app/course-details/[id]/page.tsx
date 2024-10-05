@@ -50,20 +50,15 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
             <VideoPlayer lessons={lessons} courseId={id} user={user} />
           </div>
 
-          <ul className="space-y-1"></ul>
-          {/* {learningTopics && (
-            <TopicGrid
-              title="O que voc  ir  aprender"
-              topics={learningTopics}
-            />
-          )} */}
+          <ul className="space-y-1">
+            {learningTopics && (
+              <TopicGrid
+                title="O que voc  ir  aprender"
+                topics={learningTopics}
+              />
+            )}
+          </ul>
         </div>
-        <aside className="w-1/4 p-4 border border-gray-300">
-          <Link href={`/course/${course.id}`}>
-            <Button>Ir para o curso</Button>
-          </Link>
-          <h2 className="text-xl font-bold my-6">Este curso inclui:</h2>
-        </aside>
       </div>
     </div>
   );
