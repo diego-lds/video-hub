@@ -1,5 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
+import Image from "next/image";
 import Link from "next/link";
+import { formatDateString } from "@/utils/formatUtils";
 
 interface Course {
   id: string;
@@ -7,15 +9,22 @@ interface Course {
   created_by: string;
 }
 
+// {
+//   id: 17,
+//   created_at: '2024-10-03T15:19:43.209901+00:00',
+//   title: 'Como contar',
+//   description: 'Você sempre se perguntou como as pessoas conseguem contar até 10 sem perder o fôlego? Ou quem sabe até 100, ou (segura essa!) 1000? Se sim, este curso é para você! Aprenda a arte milenar de contar de forma rápida, precisa, e – por que não? – estilosa. Desde os números básicos até as sequências mais complexas, "Como Contar" é o curso que vai transformar você no mestre dos números. Ninguém mais vai rir quando você tentar contar as estrelas, os grãos de arroz no prato, ou até mesmo seus passos no caminho de casa.',
+//   image_path: null,
+//   created_by: 'f309aa50-a343-472c-8da5-13b137e62f41'
+// },
+
 export default async function Admin() {
   const supabase = createClient();
 
-  // Recupera o usuário autenticado
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Verifica se o usuário está autenticado
   if (!user) {
     return (
       <div className="container mx-auto p-4 flex flex-col items-center justify-center">
@@ -35,7 +44,9 @@ export default async function Admin() {
   // Busca os cursos criados pelo usuário
   const { data: courses, error } = await supabase
     .from("courses")
-    .select("*")
+    .select("id, title, description, created_at, image_path", {
+      count: "exact",
+    })
     .eq("created_by", user.id);
 
   if (error) {
@@ -52,17 +63,29 @@ export default async function Admin() {
     <div className="container p-2 flex flex-col">
       <h1 className="text-4xl font-bold mb-4">Meus cursos</h1>
       <ul className="list-none p-2 border border-gray-300 rounded-sm mt-4">
-        {courses.map((course: Course) => (
+        {courses.map((course) => (
           <li
             key={course.id}
             className="mb-2 ml-2 border-b p-2 border-gray-300 hover:bg-gray-200"
           >
             <Link
               href={`/admin/course-details/${course.id}`}
-              className="text-md font-semibold"
+              className="flex items-center"
             >
-              <span className="mr-3">📚</span>
-              {course.title}
+              <Image
+                width={150}
+                height={120}
+                src={course.image_path || "/placeholder.jpg"}
+                alt={course.title}
+                className="mr-4 aspect-video w-32 outline object-cover"
+              />
+              <div>
+                <h2 className="text-lg font-semibold">{course.title}</h2>
+                <p className="text-sm my-3 text-pretty">{course.description}</p>
+                <p className="text-sm font-semibold">
+                  Criado em:{formatDateString(course.created_at)}
+                </p>
+              </div>
             </Link>
           </li>
         ))}

@@ -7,3 +7,10 @@ export const secondsToMinutes = (seconds: number): string => {
 
   return `${formattedMinutes}:${formattedSeconds}`;
 };
+export const formatDateString = (dateString: string): string => {
+  const dateFormatted = new Intl.DateTimeFormat("pt-BR").format(
+    new Date(dateString)
+  );
+
+  return dateFormatted;
+};
