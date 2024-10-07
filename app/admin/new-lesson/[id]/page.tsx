@@ -1,9 +1,8 @@
 import NewLessonForm from "@/components/NewLessonForm";
-import VideoUploader from "@/components/VideoUploader";
 import { createClient } from "@/utils/supabase/server";
 
 const NewLesson = async ({ params }: { params: { id: string } | null }) => {
-  const id = params?.id;
+  const id = params?.id.toString() || null;
 
   const supabase = createClient();
 
@@ -16,7 +15,6 @@ const NewLesson = async ({ params }: { params: { id: string } | null }) => {
       <h1>New Lesson</h1>
       <h2>From course {id}</h2>
       <NewLessonForm courseId={id} user={user} />
-      <VideoUploader courseId={id} user={user} />
     </div>
   );
 };

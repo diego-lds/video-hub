@@ -19,8 +19,7 @@ interface LessonProps {
 
 interface VideoPlayerProps {
   lessons: LessonProps[] | null;
-  courseId: string;
-  user: any;
+  courseId: string | null;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {

@@ -1,21 +1,6 @@
 "use client";
 import { createClient } from "@/utils/supabase/client";
-import Button from "@/components/Button";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import VideoPlayer from "./VideoPlayer";
-
-interface LessonProps {
-  id: number;
-  created_at: string;
-  title: string;
-  description: string;
-  vide_path: string;
-  order: number;
-  duration: number;
-  thumbnail: string | null;
-  course_id: number;
-}
 
 interface LessonProps {
   id: number;
@@ -86,7 +71,7 @@ const LessonForm = ({ lesson }: LessonFormProps) => {
       <input
         type="text"
         className="w-full p-2 mb-4 border border-gray-400 rounded"
-        value={localLesson.videoId}
+        value={localLesson.video_path}
         onChange={handleInputChange}
         name="videoId"
       />

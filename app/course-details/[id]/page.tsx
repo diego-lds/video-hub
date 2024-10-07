@@ -7,7 +7,7 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
 const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
-  const id = params?.id;
+  const id = params?.id.toString() || null;
 
   const supabase = createClient();
 
@@ -47,7 +47,7 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
           <p>{course.description}</p>
 
           <div>
-            <VideoPlayer lessons={lessons} courseId={id} user={user} />
+            <VideoPlayer lessons={lessons} courseId={id} />
           </div>
 
           <ul className="space-y-1">

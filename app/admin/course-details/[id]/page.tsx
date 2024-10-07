@@ -1,6 +1,4 @@
-import Button from "@/components/Button";
 import EditCourseForm from "@/components/EditCourseForm";
-import VideoUpload from "@/components/VideoUploader";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 

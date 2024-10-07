@@ -1,20 +1,4 @@
-import VideoPlayer from "@/components/VideoPlayer";
 import { createClient } from "@/utils/supabase/server";
-import { secondsToMinutes } from "@/utils/formatUtils";
-
-import { lessons } from "@/app/mock";
-
-interface LessonProps {
-  id: number;
-  created_at: string;
-  title: string;
-  description: string;
-  url: string;
-  order: number;
-  duration: number;
-  thumbnail: string | null;
-  course_id: number;
-}
 
 const Lesson = async ({ params }: { params: { id: string } | null }) => {
   const id = params?.id;

@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-export default function NewLessonForm({ courseId, user }) {
+export default function NewLessonForm({
+  courseId,
+  user,
+}: {
+  courseId: string | null;
+  user: {
+    id: string;
+  } | null;
+}) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState<File | null>(null);
@@ -15,15 +23,16 @@ export default function NewLessonForm({ courseId, user }) {
   const router = useRouter();
 
   const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setVideo(event.target.files?.[0]);
+    const file = event.target.files?.[0];
+    setVideo(file ? file : null);
   };
 
   const handleUpload = async () => {
-    if (!video) return;
+    if (!video || !user) return;
 
     setUploading(true);
     const supabase = createClient();
-    const filePath = user?.id + "/" + courseId + "/" + video.name;
+    const filePath = user.id + "/" + courseId + "/" + video.name;
 
     const { data: uploadResponse, error: uploadError } = await supabase.storage
       .from("public-videos")
@@ -63,16 +72,10 @@ export default function NewLessonForm({ courseId, user }) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    if (!video) return;
+    if (!video || !user) return;
     e.preventDefault();
 
     setLoading(true);
-    const supabase = createClient();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
     await handleUpload();
   };
 
@@ -106,7 +109,7 @@ export default function NewLessonForm({ courseId, user }) {
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w/full border-gray-300 rounded-md shadow-sm"
+            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
             rows={4}
             required
           />

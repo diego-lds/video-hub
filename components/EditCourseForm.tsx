@@ -76,7 +76,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     event.preventDefault();
 
     if (selectedImage) {
-      const { data, error } = await supabase.storage
+      const { data } = await supabase.storage
         .from("thumbnails")
         .upload(
           userId + "/" + course.id + "/" + selectedImage.name,
@@ -84,29 +84,23 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           { upsert: true }
         );
 
-      if (error) console.error(error);
-      else {
-        const { data: image, error: imageError } = await supabase.storage
-          .from("thumbnails")
-          .getPublicUrl(userId + "/" + course.id + "/" + selectedImage.name);
+      const { data: image } = supabase.storage
+        .from("thumbnails")
+        .getPublicUrl(userId + "/" + course.id + "/" + selectedImage.name);
 
-        if (imageError) console.error(imageError);
-        else {
-          try {
-            const { data: updateData, error: updateError } = await supabase
-              .from("courses")
-              .update({ title, description, image_path: image.publicUrl })
-              .eq("id", course.id);
+      try {
+        const { data: updateData, error: updateError } = await supabase
+          .from("courses")
+          .update({ title, description, image_path: image.publicUrl })
+          .eq("id", course.id);
 
-            if (updateError) {
-              console.error(updateError);
-            } else {
-              alert("Curso atualizado com sucesso!");
-            }
-          } catch (error) {
-            console.error(error);
-          }
+        if (updateError) {
+          console.error(updateError);
+        } else {
+          alert("Curso atualizado com sucesso!");
         }
+      } catch (error) {
+        console.error(error);
       }
     } else {
       try {
@@ -147,7 +141,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     }
   };
 
-  const handleAddTopic = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddTopic = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (newTopic) {
       try {
@@ -274,12 +268,12 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Adicionar tópico"
             />
-            <Button
+            <button
               onClick={handleAddTopic}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
               Adicionar
-            </Button>
+            </button>
           </div>
         </div>
       </form>
