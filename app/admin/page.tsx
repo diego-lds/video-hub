@@ -52,7 +52,7 @@ export default async function Admin() {
 
   return (
     <div className="container p-2 flex flex-col">
-      <h1 className="text-4xl font-bold mb-4">Meus cursos | Edição</h1>
+      <h1 className="text-4xl font-bold mb-4">Meus cursos | edição</h1>
       <ul className="list-none p-2 border border-gray-300 rounded-sm mt-4">
         {courses.map((course) => (
           <li

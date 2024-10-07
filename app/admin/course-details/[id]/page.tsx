@@ -9,7 +9,7 @@ export default async function EditCourse({
 }) {
   const supabase = createClient();
 
-  const { data: course, error: courseError } = await supabase
+  const { data: editCourse, error: courseError } = await supabase
     .from("courses")
     .select("*")
     .eq("id", params.id)
@@ -31,28 +31,20 @@ export default async function EditCourse({
 
   const { data: videos, error } = await supabase.storage
     .from("videos")
-    .list(user?.id + "/" + course);
+    .list(user?.id + "/" + editCourse);
 
   return (
     <div className="w-full">
-      <h1 className="text-3xl">{course?.title}</h1>
+      <h1 className="text-3xl">{editCourse?.title}</h1>
       <div>
         {user && (
           <EditCourseForm
-            course={course}
+            course={editCourse}
             lessons={lessons}
             userId={user?.id}
             topics={topics}
           />
         )}
-      </div>
-      <div className="flex justify-center p-2 ">
-        <Link
-          href={`/admin/new-lesson/${params.id}`}
-          className="border p-1 m-1 max-w-lg rounded shadow-lg  bg-emerald-500 text-white"
-        >
-          Criar nova aula
-        </Link>
       </div>
     </div>
   );
