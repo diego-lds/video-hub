@@ -9,15 +9,6 @@ interface Course {
   created_by: string;
 }
 
-// {
-//   id: 17,
-//   created_at: '2024-10-03T15:19:43.209901+00:00',
-//   title: 'Como contar',
-//   description: 'Você sempre se perguntou como as pessoas conseguem contar até 10 sem perder o fôlego? Ou quem sabe até 100, ou (segura essa!) 1000? Se sim, este curso é para você! Aprenda a arte milenar de contar de forma rápida, precisa, e – por que não? – estilosa. Desde os números básicos até as sequências mais complexas, "Como Contar" é o curso que vai transformar você no mestre dos números. Ninguém mais vai rir quando você tentar contar as estrelas, os grãos de arroz no prato, ou até mesmo seus passos no caminho de casa.',
-//   image_path: null,
-//   created_by: 'f309aa50-a343-472c-8da5-13b137e62f41'
-// },
-
 export default async function Admin() {
   const supabase = createClient();
 
@@ -61,7 +52,7 @@ export default async function Admin() {
 
   return (
     <div className="container p-2 flex flex-col">
-      <h1 className="text-4xl font-bold mb-4">Meus cursos</h1>
+      <h1 className="text-4xl font-bold mb-4">Meus cursos | Edição</h1>
       <ul className="list-none p-2 border border-gray-300 rounded-sm mt-4">
         {courses.map((course) => (
           <li
