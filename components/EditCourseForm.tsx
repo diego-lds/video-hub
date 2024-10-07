@@ -137,7 +137,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
     if (newTopic) {
       try {
         const { data, error } = await supabase
-          .from("learningTopics")
+          .from("learning_topics")
           .insert([{ course_id: course.id, topic: newTopic }]);
         if (error) {
           console.error(error);
@@ -154,7 +154,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
   const handleDeleteTopic = async (topic: Topic) => {
     try {
       const { data, error } = await supabase
-        .from("learningTopics")
+        .from("learning_topics")
         .delete()
         .eq("course_id", course.id)
         .eq("topic", topic.topic);
