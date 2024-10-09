@@ -1,15 +1,10 @@
 import Image from "next/image";
 
-import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
+import { getCoursesAction } from "./actions/courses";
 
 export default async function Index() {
-  const supabase = createClient();
-
-  const { data: courses } = await supabase
-    .from("courses")
-    .select("id, title, description, image_path")
-    .order("created_at", { ascending: false });
+  const { data: courses } = await getCoursesAction();
 
   return (
     <div className="container mx-auto">
