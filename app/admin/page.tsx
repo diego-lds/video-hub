@@ -1,4 +1,3 @@
-import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import { formatDateString } from "@/utils/formatUtils";
@@ -16,8 +15,8 @@ export default async function Admin() {
             key={course.id}
             className="mb-2 ml-2 border-b p-2 border-gray-300 hover:bg-gray-200"
           >
-            <Link
-              href={`/admin/course-details/${course.id}`}
+            <a
+              href={`/admin/edit-course/${course.id}`}
               className="flex items-center"
             >
               <Image
@@ -34,7 +33,7 @@ export default async function Admin() {
                   Criado em:{formatDateString(course.created_at)}
                 </p>
               </div>
-            </Link>
+            </a>
           </li>
         ))}
       </ul>

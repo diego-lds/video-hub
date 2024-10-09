@@ -60,7 +60,7 @@ export default function NewLessonForm({
         setSuccessMessage("lesson created successfully!");
         setTitle("");
         setDescription("");
-        router.push("/admin/course-details/" + courseId);
+        router.push("/admin/edit-course/" + courseId);
       }
 
       if (newLessonErr) {

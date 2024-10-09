@@ -2,9 +2,16 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-const supabase = createClient();
+interface Course {
+  id: number;
+  title: string;
+  description: string;
+  newImage: File | null;
+}
 
 export const getCoursesAction = async () => {
+  const supabase = createClient();
+
   const { data, error } = await supabase
     .from("courses")
     .select("id, title, description, image_path")
@@ -19,6 +26,8 @@ export const getCoursesAction = async () => {
 };
 
 export const getMyCoursesAction = async () => {
+  const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -37,14 +46,16 @@ export const getMyCoursesAction = async () => {
   return { data };
 };
 
-export const getCoursesDetailsAction = async (courseId: string) => {
-  const { data, error } = await supabase
+export const getCoursesDetailsAction = async (courseId: string | null) => {
+  const supabase = createClient();
+
+  const { data: courseDetails, error } = await supabase
     .from("courses")
     .select(
       `
       *,
-      lessons (*),
-      learning_topics (topic)
+      lessons!inner(*), 
+      learning_topics(*)
     `
     )
     .eq("id", courseId)
@@ -52,6 +63,26 @@ export const getCoursesDetailsAction = async (courseId: string) => {
 
   if (error) {
     console.error("Erro ao buscar dados do curso:", error);
+  }
+
+  return { courseDetails };
+};
+
+export const updateCourseDetails = async (courseData: Course) => {
+  const supabase = createClient();
+  const { id, title, description, newImage } = courseData;
+
+  const { data, error } = await supabase
+    .from("courses")
+    .update({ title, description })
+    .eq("id", id);
+
+  if (error) return { error };
+
+  if (newImage) {
+    const {} = supabase.storage
+      .from("thumbnails")
+      .upload(`${id}`, newImage, { upsert: true });
   }
 
   return { data };

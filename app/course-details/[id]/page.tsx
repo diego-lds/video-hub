@@ -1,3 +1,4 @@
+import { getCoursesDetailsAction } from "@/app/actions/courses";
 import Button from "@/components/Button";
 
 import Curriculum from "@/components/Curriculum";
@@ -6,7 +7,7 @@ import VideoPlayer from "@/components/VideoPlayer";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
-const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
+const EditCourse = async ({ params }: { params: { id: string } | null }) => {
   const id = params?.id.toString() || null;
 
   const supabase = createClient();
@@ -28,7 +29,6 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
   const { data: lessons } = await supabase
     .from("lessons")
     .select("*")
-    // .select("id, title, description, video_path")
     .eq("course_id", course.id)
     .order("order", { ascending: true });
 
@@ -63,4 +63,4 @@ const CourseDetails = async ({ params }: { params: { id: string } | null }) => {
     </div>
   );
 };
-export default CourseDetails;
+export default EditCourse;

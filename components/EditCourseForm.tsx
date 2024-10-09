@@ -1,17 +1,11 @@
 "use client";
-import { createClient } from "@/utils/supabase/client";
-import { useEffect, useRef, useState } from "react";
+
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Link from "next/link";
 import Image from "next/image";
-
-interface Course {
-  id: number;
-  title: string;
-  description: string;
-  image_path: string;
-}
+import { useState } from "react";
+import { updateCourseDetails } from "@/app/actions/courses";
 
 interface Lesson {
   id: number;
@@ -29,154 +23,60 @@ interface Topic {
   topic: string;
 }
 
-interface FileObject {
-  name: string;
-  id: null | string;
-  updated_at: null | string;
-  created_at: null | string;
-  last_accessed_at: null | string;
-  metadata: null | object;
+interface CourseDetails {
+  id: number;
+  title: string;
+  description: string;
+  image_path: string;
+  lessons: Lesson[] | [];
+  topics: Topic[] | [];
 }
 
-interface EditCourseFormProps {
-  course: Course;
-  lessons: null | Lesson[];
-  userId: string;
-  topics: null | Topic[];
+interface CourseDetailsProps {
+  courseDetails: CourseDetails;
 }
 
-const EditCourseForm: React.FC<EditCourseFormProps> = ({
-  course,
-  lessons,
-  userId,
-  topics: initialTopics,
-}) => {
-  const supabase = createClient();
+const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
   const router = useRouter();
 
-  const [title, setTitle] = useState(course.title);
-  const [topics, setTopics] = useState<Topic[]>(initialTopics ?? []);
+  const [course, setCourse] = useState<CourseDetails>(courseDetails);
+
+  const [title, setTitle] = useState(courseDetails?.title);
+  const [description, setDescription] = useState(courseDetails?.description);
+  const [topics, setTopics] = useState<Topic[]>(courseDetails?.topics);
+  const [lessons, setLessons] = useState<Lesson[]>(courseDetails?.lessons);
   const [newTopic, setNewTopic] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePath, setImagePath] = useState<File | null>(null);
-
+  const [newImage, setNewImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [description, setDescription] = useState(course.description); /*  */
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (selectedImage) {
-      const { data } = await supabase.storage
-        .from("thumbnails")
-        .upload(
-          userId + "/" + course.id + "/" + selectedImage.name,
-          selectedImage,
-          { upsert: true }
-        );
-
-      const { data: image } = supabase.storage
-        .from("thumbnails")
-        .getPublicUrl(userId + "/" + course.id + "/" + selectedImage.name);
-
-      try {
-        const { data: updateData, error: updateError } = await supabase
-          .from("courses")
-          .update({ title, description, image_path: image.publicUrl })
-          .eq("id", course.id);
-
-        if (updateError) {
-          console.error(updateError);
-        } else {
-          alert("Curso atualizado com sucesso!");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      try {
-        const { data, error } = await supabase
-          .from("courses")
-          .update({ title, description })
-          .eq("id", course.id);
-
-        if (error) {
-          console.error(error);
-        } else {
-          alert("Curso atualizado com sucesso!");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const handleDeleteLesson = async (lesson: Lesson) => {
-    if (
-      window.confirm(`Tem certeza que deseja deletar a lesson ${lesson.title}?`)
-    ) {
-      try {
-        const { data, error } = await supabase
-          .from("lessons")
-          .delete()
-          .eq("id", lesson.id);
-        if (error) {
-          console.error(error);
-        } else {
-          console.log(data);
-          router.refresh();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const handleAddTopic = async (e: React.FormEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    if (newTopic) {
-      try {
-        const { data, error } = await supabase
-          .from("learning_topics")
-          .insert([{ course_id: course.id, topic: newTopic }]);
-        if (error) {
-          console.error(error);
-        } else {
-          setTopics([...topics, { topic: newTopic }]);
-          setNewTopic("");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  const handleDeleteTopic = async (topic: Topic) => {
-    try {
-      const { data, error } = await supabase
-        .from("learning_topics")
-        .delete()
-        .eq("course_id", course.id)
-        .eq("topic", topic.topic);
-      if (error) {
-        console.error(error);
-      } else {
-        setTopics(topics.filter((t) => t.topic !== topic.topic));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
+      setNewImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const courseData = {
+      id: courseDetails?.id,
+      title,
+      description,
+      newImage,
+    };
+    console.log(courseData);
+    const { error } = await updateCourseDetails(courseData);
+
+    if (error) {
+      console.error(error);
+    } else {
+      alert("Curso atualizado com sucesso!");
+      router.push("/");
     }
   };
 
@@ -197,7 +97,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           </label>
           <input
             type="text"
-            value={title}
+            value={course.title}
             onChange={(event) => setTitle(event.target.value)}
             className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           />
@@ -208,7 +108,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
             Descrição:
           </label>
           <textarea
-            value={description}
+            value={course.description}
             onChange={(event) => setDescription(event.target.value)}
             className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             rows={4}
@@ -259,14 +159,14 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           Tópicos de aprendizagem:
         </label>
         <ul className="space-y-2">
-          {topics.map((topic) => (
+          {course.topics?.map((topic) => (
             <li
               key={topic.topic}
               className="flex justify-between items-center p-3 bg-gray-50 rounded-lg shadow-sm border border-gray-200"
             >
               {topic.topic}
               <a
-                onClick={() => handleDeleteTopic(topic)}
+                onClick={() => console.log(topic)}
                 className="text-red-600 hover:text-red-800 cursor-pointer transition"
               >
                 ❌️
@@ -284,7 +184,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
             placeholder="Adicionar tópico"
           />
           <button
-            onClick={handleAddTopic}
+            onClick={() => console.log("ADDTopic")}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
           >
             Adicionar tópico
@@ -297,7 +197,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           Aulas do curso:
         </label>
         <ul>
-          {lessons?.map((lesson) => (
+          {course.lessons?.map((lesson) => (
             <li
               key={lesson.id}
               className="flex justify-between py-3 border-b border-gray-200 last:border-b-0"
@@ -306,7 +206,7 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
                 {lesson.title}
               </Link>
               <Button
-                onClick={() => handleDeleteLesson(lesson)}
+                onClick={() => console.log(lesson)}
                 className="bg-red-600 hover:bg-red-800 text-white font-bold py-1 px-3 rounded-lg transition"
               >
                 Deletar aula
@@ -315,7 +215,9 @@ const EditCourseForm: React.FC<EditCourseFormProps> = ({
           ))}
         </ul>
         <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition mt-5">
-          <Link href={`/admin/new-lesson/${course.id}`}>Criar nova aula</Link>
+          <Link href={`/admin/new-lesson/${courseDetails.id}`}>
+            Criar nova aula
+          </Link>
         </button>
       </div>
     </div>
