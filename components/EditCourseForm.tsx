@@ -4,8 +4,13 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
-import { updateCourseDetails } from "@/app/actions/courses";
+import { useEffect, useState } from "react";
+import {
+  addNewTopic,
+  deleteTopic,
+  updateCourseDetails,
+} from "@/app/actions/courses";
+import { processImageFile } from "@/utils/imageUtils";
 
 interface Lesson {
   id: number;
@@ -20,6 +25,8 @@ interface Lesson {
 }
 
 interface Topic {
+  id?: string;
+  course_id: string;
   topic: string;
 }
 
@@ -29,7 +36,7 @@ interface CourseDetails {
   description: string;
   image_path: string;
   lessons: Lesson[] | [];
-  topics: Topic[] | [];
+  learning_topics: Topic[] | [];
 }
 
 interface CourseDetailsProps {
@@ -39,44 +46,75 @@ interface CourseDetailsProps {
 const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
   const router = useRouter();
 
-  const [course, setCourse] = useState<CourseDetails>(courseDetails);
-
   const [title, setTitle] = useState(courseDetails?.title);
   const [description, setDescription] = useState(courseDetails?.description);
-  const [topics, setTopics] = useState<Topic[]>(courseDetails?.topics);
-  const [lessons, setLessons] = useState<Lesson[]>(courseDetails?.lessons);
-  const [newTopic, setNewTopic] = useState("");
+  const [topics, setTopics] = useState<Topic[] | []>(
+    courseDetails?.learning_topics
+  );
+  const [lessons, setLessons] = useState<Lesson[] | []>(courseDetails?.lessons);
+  const [coverImage, setCoverImage] = useState<string | null>(
+    courseDetails?.image_path
+  );
+  const [newTopic, setNewTopic] = useState<string>("");
   const [newImage, setNewImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddTopic = async (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!newTopic) return;
+
+    const formData = new FormData();
+    formData.set("course_id", courseDetails.id.toString());
+    formData.set("topic", newTopic);
+
+    const { data, error } = await addNewTopic(formData);
+    if (error) {
+      console.log(error);
+    } else {
+      setNewTopic("");
+      setTopics([...topics, data[0]]);
+      console.log("Tópico adicionado com sucesso!");
+    }
+  };
+
+  const handleDeleteTopic = async (topic: Topic) => {
+    if (!topic.id) return;
+
+    const { error } = await deleteTopic(topic.id.toString());
+    if (error) {
+      console.log(error);
+    } else {
+      setTopics(topics.filter((t) => t.id !== topic.id));
+      console.log("Tópico removido com sucesso!");
+    }
+  };
+
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
+      const processedImage = await processImageFile(file);
       setNewImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setPreviewImage(processedImage);
     }
   };
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const formData = new FormData();
 
-    const courseData = {
-      id: courseDetails?.id,
-      title,
-      description,
-      newImage,
-    };
-    console.log(courseData);
-    const { error } = await updateCourseDetails(courseData);
+    formData.append("id", courseDetails?.id.toString());
+    formData.append("title", title);
+    formData.append("description", description);
+    if (newImage) formData.append("image", newImage);
+
+    const { error } = await updateCourseDetails(formData);
 
     if (error) {
       console.error(error);
     } else {
       alert("Curso atualizado com sucesso!");
-      router.push("/");
+      router.push("/admin");
     }
   };
 
@@ -97,7 +135,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
           </label>
           <input
             type="text"
-            value={course.title}
+            value={title}
             onChange={(event) => setTitle(event.target.value)}
             className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           />
@@ -108,7 +146,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
             Descrição:
           </label>
           <textarea
-            value={course.description}
+            value={description}
             onChange={(event) => setDescription(event.target.value)}
             className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             rows={4}
@@ -120,11 +158,11 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
             Foto de capa atual:
           </label>
           <Image
-            src={course.image_path}
+            src={coverImage || "/placeholder.jpg"}
             alt="Course image"
             width={200}
-            height={200}
-            className="rounded-md"
+            height={150}
+            className="h-auto w-auto rounded-md"
           />
         </div>
 
@@ -138,7 +176,9 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
             className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
           />
           {previewImage && (
-            <img
+            <Image
+              width={200}
+              height={100}
               src={previewImage}
               alt="Preview image"
               className="w-64 h-auto mt-4 rounded-md"
@@ -159,14 +199,14 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
           Tópicos de aprendizagem:
         </label>
         <ul className="space-y-2">
-          {course.topics?.map((topic) => (
+          {topics?.map((topic) => (
             <li
-              key={topic.topic}
+              key={topic.id}
               className="flex justify-between items-center p-3 bg-gray-50 rounded-lg shadow-sm border border-gray-200"
             >
               {topic.topic}
               <a
-                onClick={() => console.log(topic)}
+                onClick={() => handleDeleteTopic(topic)}
                 className="text-red-600 hover:text-red-800 cursor-pointer transition"
               >
                 ❌️
@@ -184,7 +224,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
             placeholder="Adicionar tópico"
           />
           <button
-            onClick={() => console.log("ADDTopic")}
+            onClick={handleAddTopic}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
           >
             Adicionar tópico
@@ -197,7 +237,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
           Aulas do curso:
         </label>
         <ul>
-          {course.lessons?.map((lesson) => (
+          {lessons?.map((lesson) => (
             <li
               key={lesson.id}
               className="flex justify-between py-3 border-b border-gray-200 last:border-b-0"
@@ -215,7 +255,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
           ))}
         </ul>
         <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition mt-5">
-          <Link href={`/admin/new-lesson/${courseDetails.id}`}>
+          <Link href={`/admin/new-lesson/${courseDetails?.id}`}>
             Criar nova aula
           </Link>
         </button>
