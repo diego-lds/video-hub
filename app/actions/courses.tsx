@@ -146,3 +146,49 @@ export const deleteTopic = async (topicId: string) => {
 
   return { error };
 };
+
+export const createNewLesson = async (formData: FormData) => {
+  const supabase = createClient();
+
+  const course_id = formData.get("course_id") as string;
+
+  const title = formData.get("title") as string;
+  const description = formData.get("description") as string;
+  const video = formData.get("video") as File;
+
+  const { data, error } = await supabase
+    .from("lessons")
+    .insert({ title, description, course_id })
+    .select();
+
+  if (error) {
+    return { error };
+  }
+  const newLesson = data[0];
+
+  const { error: videoError } = await supabase.storage
+    .from("public-videos")
+    .upload(newLesson.id.toString(), video);
+
+  if (videoError) {
+    return { error: videoError };
+  }
+
+  return { data: data[0] };
+};
+
+export const getLessonVideoUrl = async (lessonId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase.storage
+    .from("public-videos")
+    .createSignedUrl(lessonId, 3600);
+
+  if (error) {
+    return error;
+  }
+
+  console.log({ data });
+
+  return { data };
+};

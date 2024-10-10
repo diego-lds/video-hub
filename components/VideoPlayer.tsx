@@ -1,11 +1,12 @@
 "use client";
 
+import { getLessonVideo, getLessonVideoUrl } from "@/app/actions/courses";
 import { secondsToMinutes } from "@/utils/formatUtils";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 
-interface LessonProps {
+interface Lesson {
   id: number;
   created_at: string;
   title: string;
@@ -18,25 +19,21 @@ interface LessonProps {
 }
 
 interface VideoPlayerProps {
-  lessons: LessonProps[] | null;
-  courseId: string | null;
+  lessons: Lesson[];
+  courseId: string;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
-  const [currentLesson, setCurrentLesson] = useState<LessonProps | null>(null);
-  const [url, setUrl] = useState<string | null>(null);
+  const [currentLesson, setCurrentLesson] = useState<Lesson>(lessons[0]);
+  const [url, setUrl] = useState<string>("");
 
   const supabase = createClient();
   useEffect(() => {
-    const firstLesson = lessons?.[0] || null;
+    const lessonId = currentLesson?.id.toString();
 
-    setCurrentLesson(firstLesson);
+    const { data, error } = getLessonVideoUrl(lessonId);
 
-    const { data } = supabase.storage
-      .from("public-videos")
-      .getPublicUrl(firstLesson?.video_path || "");
-
-    setUrl(data.publicUrl);
+    setUrl(data?.publicUrl || "");
   }, []);
 
   const handleClick = async (lesson: LessonProps) => {

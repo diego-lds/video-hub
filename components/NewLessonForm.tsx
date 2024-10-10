@@ -1,24 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-export default function NewLessonForm({
-  courseId,
-  user,
-}: {
-  courseId: string | null;
-  user: {
-    id: string;
-  } | null;
-}) {
+import { createNewLesson } from "@/app/actions/courses";
+export default function NewLessonForm({ courseId }: { courseId: string }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [video, setVideo] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | undefined | null>(null);
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   const router = useRouter();
 
@@ -27,56 +16,27 @@ export default function NewLessonForm({
     setVideo(file ? file : null);
   };
 
-  const handleUpload = async () => {
-    if (!video || !user) return;
-
-    setUploading(true);
-    const supabase = createClient();
-    const filePath = user.id + "/" + courseId + "/" + video.name;
-
-    const { data: uploadResponse, error: uploadError } = await supabase.storage
-      .from("public-videos")
-      .upload(filePath, video, { upsert: true });
-
-    console.log({ uploadResponse, title, description });
-
-    if (!uploadError) {
-      const { data: newLesson, error: newLessonErr } = await supabase
-        .from("lessons")
-        .insert([
-          {
-            title,
-            description,
-            course_id: courseId,
-            video_path: uploadResponse.path,
-          },
-        ]);
-      setLoading(false);
-      if (newLessonErr) {
-        console.error("Error creating lesson:", newLessonErr.message);
-        alert("Failed to create lesson.");
-      } else {
-        console.log({ newLesson });
-        setSuccessMessage("lesson created successfully!");
-        setTitle("");
-        setDescription("");
-        router.push("/admin/edit-course/" + courseId);
-      }
-
-      if (newLessonErr) {
-        setError(newLessonErr.message);
-      } else {
-        console.log("Video carregado com sucesso!");
-      }
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
-    if (!video || !user) return;
+    if (!video) return;
     e.preventDefault();
+    const formData = new FormData();
+
+    formData.append("course_id", courseId.toString());
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("video", video);
+    setLoading(true);
+
+    const { data, error } = await createNewLesson(formData);
 
     setLoading(true);
-    await handleUpload();
+
+    if (error) {
+      console.log("Erro ao criar a aula", error);
+    } else {
+      alert("Aula criada com sucesso");
+      router.push("/admin/edit-course/" + courseId);
+    }
   };
 
   return (
@@ -87,7 +47,7 @@ export default function NewLessonForm({
             htmlFor="title"
             className="block text-sm font-medium text-gray-700"
           >
-            Lesson Title
+            Título
           </label>
           <input
             type="text"
@@ -103,7 +63,7 @@ export default function NewLessonForm({
             htmlFor="description"
             className="block text-sm font-medium text-gray-700"
           >
-            Lesson Description
+            Descrição
           </label>
           <textarea
             id="description"
@@ -118,10 +78,6 @@ export default function NewLessonForm({
         <section>
           <div>
             <input type="file" accept="video/*" onChange={handleVideoChange} />
-            {/* <button onClick={handleUpload} disabled={uploading}>
-              {uploading ? "Carregando..." : "Carregar Vídeo"}
-            </button> */}
-            {error && <p style={{ color: "red" }}>{error}</p>}
           </div>
         </section>
         <button
@@ -131,9 +87,6 @@ export default function NewLessonForm({
         >
           {loading ? "Creating..." : "Criar aula"}
         </button>
-        {successMessage && (
-          <p className="text-green-500 mt-4">{successMessage}</p>
-        )}
       </form>
     </div>
   );

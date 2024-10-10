@@ -39,7 +39,7 @@ export default async function Index() {
           <Link
             className="bg-white p-6 rounded-md shadow-lg"
             key={course.id}
-            href={`/course-details/${course.id}`}
+            href={`/course/${course.id}`}
           >
             <div className="relative h-48 w-full">
               <Image

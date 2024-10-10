@@ -36,7 +36,6 @@ export default function NewCourseForm() {
       alert("Failed to create course.");
     } else {
       setSuccessMessage("Course created successfully!");
-
       router.push("/admin");
     }
   };

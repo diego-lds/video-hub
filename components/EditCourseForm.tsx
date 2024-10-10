@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   addNewTopic,
   deleteTopic,
