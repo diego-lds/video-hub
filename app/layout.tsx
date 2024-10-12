@@ -3,6 +3,7 @@ import "./globals.css";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PageContainer from "@/components/PageContainer";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -23,9 +24,11 @@ export default function RootLayout({
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
         <Navbar />
-        <main className="min-h-screen mx-32 my-4 flex flex-col items-center">
-          {children}
-        </main>
+        <PageContainer>
+          <main className="min-h-screen mx-32 my-4 flex flex-col items-center">
+            {children}
+          </main>
+        </PageContainer>
         <Footer />
       </body>
     </html>
