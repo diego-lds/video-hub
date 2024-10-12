@@ -1,8 +1,8 @@
 import NewLessonForm from "@/components/NewLessonForm";
 import { createClient } from "@/utils/supabase/server";
 
-const NewLesson = async ({ params }: { params: { id: string } | null }) => {
-  const id = params?.id.toString() || null;
+const NewLesson = async ({ params }: { params: { id: string } }) => {
+  const id = params?.id.toString();
 
   const supabase = createClient();
 
@@ -12,9 +12,7 @@ const NewLesson = async ({ params }: { params: { id: string } | null }) => {
 
   return (
     <div className="w-full">
-      <h1>New Lesson</h1>
-      <h2>From course {id}</h2>
-      <NewLessonForm courseId={id} user={user} />
+      <NewLessonForm courseId={id} />
     </div>
   );
 };
