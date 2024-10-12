@@ -5,14 +5,13 @@ interface Topic {
 }
 
 interface TopicGridProps {
-  title: string;
   topics: Topic[] | null;
 }
 
-const TopicGrid: React.FC<TopicGridProps> = ({ title, topics }) => {
+const TopicGrid: React.FC<TopicGridProps> = ({ topics }) => {
   return (
     <div className="max-w-3xl  p-6 rounded-sm  border border-gray-300">
-      <h2 className="text-2xl font-bold mb-8">{title}</h2>
+      <h2 className="text-2xl font-bold mb-8">O que você irá aprender</h2>
       <div className="grid grid-cols-2 gap-4">
         {topics?.map((topic, index) => (
           <div key={index} className="flex items-center">

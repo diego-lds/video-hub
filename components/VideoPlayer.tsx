@@ -1,6 +1,6 @@
 "use client";
 
-import { getLessonVideo, getLessonVideoUrl } from "@/app/actions/courses";
+import { getLessonVideoUrl } from "@/app/actions/courses";
 import { secondsToMinutes } from "@/utils/formatUtils";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
@@ -8,72 +8,83 @@ import ReactPlayer from "react-player/lazy";
 
 interface Lesson {
   id: number;
-  created_at: string;
+
   title: string;
   description: string;
   video_path: string | null;
-  order: number;
-  duration: number;
-  thumbnail: string | null;
+
   course_id: number;
 }
 
 interface VideoPlayerProps {
   lessons: Lesson[];
-  courseId: string;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
   const [currentLesson, setCurrentLesson] = useState<Lesson>(lessons[0]);
   const [url, setUrl] = useState<string>("");
 
-  const supabase = createClient();
-  useEffect(() => {
-    const lessonId = currentLesson?.id.toString();
+  const fetchVideoUrl = () => {
+    const supabase = createClient();
 
-    const { data, error } = getLessonVideoUrl(lessonId);
-
-    setUrl(data?.publicUrl || "");
-  }, []);
-
-  const handleClick = async (lesson: LessonProps) => {
     const { data } = supabase.storage
       .from("public-videos")
-      .getPublicUrl(lesson?.video_path || "");
+      .getPublicUrl(currentLesson?.id.toString());
 
-    setUrl(data.publicUrl);
+    setUrl(data?.publicUrl);
+  };
+
+  useEffect(() => {
+    fetchVideoUrl();
+  }, [currentLesson]);
+
+  const handleClick = async (lesson: Lesson) => {
     setCurrentLesson(lesson);
   };
 
   return (
     <>
-      {currentLesson && <h1 className="text-3xl">{currentLesson.title}</h1>}
-      <main className="flex flex-col">
-        {url && (
-          <ReactPlayer
-            url={url}
-            controls={true}
-            playing={false}
-            height="100%"
-            width="100%"
-            style={{ aspectRatio: "16/9", height: "480px" }}
-          />
-        )}
+      {currentLesson && (
+        <h1 className="text-3xl font-bold">{currentLesson.title}</h1>
+      )}
+      {currentLesson && (
+        <h2 className="text-sm">{currentLesson.description}</h2>
+      )}
+
+      <main className="flex flex-col mt-2">
+        <div className="w-full h-96 aspect-ratio-16/9 border border-gray-300 rounded-sm mb-5">
+          {url ? (
+            <ReactPlayer
+              url={url}
+              controls={true}
+              playing={false}
+              height="100%"
+              width="100%"
+            />
+          ) : (
+            <div className="h-96  flex flex-col items-center justify-center">
+              <p className="text-3xl font-bold">Carregando...</p>
+            </div>
+          )}
+        </div>
         <div>
           <ul>
+            <h1 className="text-2xl">Conteúdo do curso</h1>
             {lessons?.map((lesson, index) => (
               <li
                 key={index}
-                className={`flex flex-col  border border-gray-200 p-2 ${
-                  currentLesson?.id === lesson.id ? "border-gray-500" : ""
+                className={`flex flex-col  border-gray-300 p-2 hover:bg-slate-100 hover:text-blue-500 ${
+                  currentLesson?.id === lesson.id
+                    ? "border border-gray-500"
+                    : ""
                 }`}
                 onClick={() => handleClick(lesson)}
               >
                 <p className="flex items-center gap-2">
-                  <span className="text-sm text-red-500 border border-red-300 cursor-pointer px-1 select-none">
+                  <span className="text-md text-red-500 border border-red-300 cursor-pointer px-1 select-none">
                     ▶️
                   </span>
-                  <span className="text-sm font-bold">{lesson.title}</span>
+                  <span className="text-md font-bold">{lesson.title}</span>
                 </p>
               </li>
             ))}

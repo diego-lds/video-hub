@@ -36,13 +36,27 @@ export const createCourse = async (formData: FormData) => {
   }
 
   if (image) {
-    const newCourseId = data[0].id;
-    const { data: imageReponse, error } = await supabase.storage
+    const newCourseId = data[0].id.toString();
+
+    const { error } = await supabase.storage
       .from("thumbnails")
-      .upload(newCourseId.toString(), image, { upsert: true });
+      .upload(newCourseId, image, { upsert: true });
 
     if (error) {
       return { error };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("thumbnails")
+      .getPublicUrl(newCourseId);
+
+    const { data: updateData, error: updateError } = await supabase
+      .from("courses")
+      .update({ image_path: publicUrlData.publicUrl })
+      .eq("id", newCourseId);
+
+    if (updateError) {
+      return { error: updateError };
     }
   }
 
@@ -65,19 +79,23 @@ export const getMyCoursesAction = async () => {
   if (error) {
     return { error };
   }
+
   return { data };
 };
 
-export const getCoursesDetailsAction = async (courseId: string | null) => {
+export const getCoursesDetailsAction = async (courseId: string) => {
   const supabase = createClient();
 
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from("courses")
     .select(
       `
-      *,
-    lessons:lessons(*),
-    learning_topics:learning_topics(*)
+      id,
+      title,
+      description,
+      image_path,
+      lessons:lessons(id, title, description, course_id),
+      learning_topics:learning_topics(id, topic, course_id)
     `
     )
     .eq("id", courseId)
@@ -91,7 +109,24 @@ export const getCoursesDetailsAction = async (courseId: string | null) => {
     data: { publicUrl },
   } = supabase.storage.from("thumbnails").getPublicUrl(data?.id);
 
-  return { data, image_path: publicUrl };
+  data.image_path = publicUrl;
+
+  return { data };
+};
+
+export const getTopicsAction = async (courseId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("learning_topics")
+    .select("id, topic, course_id")
+    .eq("course_id", courseId);
+
+  if (error) {
+    return { error };
+  }
+
+  return { data };
 };
 
 export const updateCourseDetails = async (formData: FormData) => {
@@ -185,10 +220,8 @@ export const getLessonVideoUrl = async (lessonId: string) => {
     .createSignedUrl(lessonId, 3600);
 
   if (error) {
-    return error;
+    return { error };
   }
-
-  console.log({ data });
-
+  console.log(data);
   return { data };
 };
