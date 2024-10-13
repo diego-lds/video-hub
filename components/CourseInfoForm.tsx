@@ -1,8 +1,10 @@
+import Image from "next/image";
 import React from "react";
 
 interface CourseInfoFormProps {
   title: string;
   description: string;
+  image: string | null;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
   onSubmit: (event: React.MouseEvent<HTMLFormElement>) => void;
@@ -11,20 +13,24 @@ interface CourseInfoFormProps {
 const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   title,
   description,
+  image,
   setTitle,
   setDescription,
-  onSubmit,
 }) => {
   return (
-    <form
-      onSubmit={onSubmit}
-      className="w-full p-6 bg-white rounded-lg shadow-md space-y-6"
-    >
-      <label className="block text-xl font-medium mb-2">
-        Informações do curso
-      </label>
+    <div>
       <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-medium mb-2">
+        <label className="block text-lg font-semibold text-gray-800 mb-2">
+          Foto de capa atual:
+        </label>
+        <Image
+          src={image || "/placeholder.jpg"}
+          alt="Course image"
+          width={200}
+          height={150}
+          className="h-auto w-auto rounded-md mb-2"
+        />
+        <label className="block text-lg font-semibold text-gray-800 mb-2">
           Título:
         </label>
         <input
@@ -35,7 +41,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
         />
       </div>
       <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-medium mb-2">
+        <label className="block text-lg font-semibold text-gray-800 mb-2">
           Descrição:
         </label>
         <textarea
@@ -45,14 +51,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
           rows={4}
         />
       </div>
-
-      <button
-        type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
-      >
-        Atualizar Informações do curso
-      </button>
-    </form>
+    </div>
   );
 };
 

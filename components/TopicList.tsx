@@ -1,8 +1,8 @@
+import { Topic } from "@/types";
 import React, { useState } from "react";
-import { Topic } from "@/types/course";
 
 interface TopicsListProps {
-  topics: Topic[];
+  topics: Topic[] | [];
   onAddTopic: (topic: string) => void;
   onDeleteTopic: (topicId: string) => void;
 }

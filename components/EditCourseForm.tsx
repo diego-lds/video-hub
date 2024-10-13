@@ -15,18 +15,7 @@ import CourseInfoForm from "./CourseInfoForm";
 import ImageUploader from "./ImageUploader";
 import TopicsList from "./TopicList";
 import LessonsList from "./LessonList";
-
-interface Lesson {
-  id: number;
-  created_at: string;
-  title: string;
-  description: string;
-  url: string;
-  order: number;
-  duration: number;
-  thumbnail: null;
-  course_id: number;
-}
+import { Lesson } from "@/types";
 
 interface Topic {
   id?: string;
@@ -34,43 +23,38 @@ interface Topic {
   topic: string;
 }
 
-interface CourseDetails {
+interface CourseDetailsProps {
+  course: Course;
+  lessons: any[];
+  topics: any[];
+}
+
+interface Course {
   id: number;
   title: string;
   description: string;
   image_path: string;
-  lessons: Lesson[] | [];
-  learning_topics: Topic[] | [];
 }
 
-interface CourseDetailsProps {
-  courseDetails: CourseDetails;
-}
-
-const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
+const EditCourseForm: React.FC<CourseDetailsProps> = ({
+  course,
+  lessons: courseLessons,
+  topics: courseTopics,
+}) => {
   const router = useRouter();
 
-  const {
-    title: initTitle,
-    description: initDescription,
-    lessons: initLessons,
-    learning_topics,
-    image_path,
-  } = courseDetails;
-
-  const [title, setTitle] = useState(initTitle);
-  const [description, setDescription] = useState(initDescription);
-  const [topics, setTopics] = useState<Topic[] | []>(learning_topics);
-  const [lessons] = useState<Lesson[] | []>(initLessons);
-  const [coverImage] = useState<string | null>(image_path);
+  const [title, setTitle] = useState(course.title);
+  const [description, setDescription] = useState(course.description);
+  const [topics, setTopics] = useState<Topic[] | []>(courseTopics);
+  const [lessons] = useState<Lesson[] | []>(courseLessons);
+  const [image, setImage] = useState<string | null>(course.image_path);
   const [newImage, setNewImage] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-
+  console.log(lessons);
   const handleAddTopic = async (topic: string) => {
     if (!topic) return;
 
     const formData = new FormData();
-    formData.set("course_id", courseDetails.id.toString());
+    formData.set("course_id", course.id.toString());
     formData.set("topic", topic);
 
     const { data, error } = await addNewTopic(formData);
@@ -92,19 +76,17 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
     }
   };
 
-  const handleImageChange = (file: File) => {
+  const handleImageChange = (file: File | null) => {
     if (file) {
-      processImageFile(file).then((processedImage) => {
-        setNewImage(file);
-        setPreviewImage(processedImage);
-      });
+      setNewImage(file);
     }
   };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData();
 
-    formData.append("id", courseDetails?.id.toString());
+    formData.append("id", course?.id.toString());
     formData.append("title", title);
     formData.append("description", description);
 
@@ -123,22 +105,28 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-100 min-h-screen">
+    <div className="w-full p-6 bg-white rounded-lg shadow-md space-y-6">
       <h1 className="text-xl font-bold text-gray-800 mb-6">Editar Curso</h1>
 
-      <CourseInfoForm
-        title={title}
-        description={description}
-        setTitle={setTitle}
-        setDescription={setDescription}
-        onSubmit={handleSubmit}
-      />
+      <form onSubmit={handleSubmit}>
+        <CourseInfoForm
+          title={title}
+          description={description}
+          setTitle={setTitle}
+          setDescription={setDescription}
+          onSubmit={handleSubmit}
+          image={image}
+        />
 
-      <ImageUploader
-        currentImage={coverImage}
-        previewImage={previewImage}
-        onImageChange={handleImageChange}
-      />
+        <ImageUploader onImageChange={handleImageChange} />
+
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 my-4 rounded-lg"
+        >
+          Atualizar Informações do curso
+        </button>
+      </form>
 
       <TopicsList
         topics={topics}
@@ -146,8 +134,9 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({ courseDetails }) => {
         onDeleteTopic={handleDeleteTopic}
       />
 
-      <LessonsList lessons={lessons} courseId={courseDetails.id} />
+      <LessonsList lessons={lessons} courseId={course.id} />
     </div>
   );
 };
+
 export default EditCourseForm;

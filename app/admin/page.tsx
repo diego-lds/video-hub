@@ -5,7 +5,6 @@ import { getMyCoursesAction } from "../actions/courses";
 
 export default async function Admin() {
   const { data: courses } = await getMyCoursesAction();
-
   return (
     <div className="container p-2 flex flex-col">
       <h1 className="text-4xl font-bold mb-4">Meus cursos | edição</h1>

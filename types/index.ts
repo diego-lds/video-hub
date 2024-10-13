@@ -4,10 +4,9 @@ export interface Lesson {
   created_at: string;
   title: string;
   description: string;
-  url: string;
-  order: number;
-  duration: number;
-  thumbnail: string | null;
+  video_path: string;
+  order: number | null;
+  duration: number | null;
   course_id: number;
 }
 

@@ -80,6 +80,23 @@ export const getMyCoursesAction = async () => {
     return { error };
   }
 
+  console.log(data);
+
+  return { data };
+};
+
+export const getCourseLessonsAction = async (courseId: string) => {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from("lessons")
+    .select("*")
+    .eq("course_id", courseId);
+
+  if (error) {
+    return { error };
+  }
+
   return { data };
 };
 
@@ -88,16 +105,7 @@ export const getCoursesDetailsAction = async (courseId: string) => {
 
   const { data, error } = await supabase
     .from("courses")
-    .select(
-      `
-      id,
-      title,
-      description,
-      image_path,
-      lessons:lessons(id, title, description, course_id),
-      learning_topics:learning_topics(id, topic, course_id)
-    `
-    )
+    .select("id,title,description,image_path")
     .eq("id", courseId)
     .single();
 
@@ -105,16 +113,10 @@ export const getCoursesDetailsAction = async (courseId: string) => {
     return { error };
   }
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("thumbnails").getPublicUrl(data?.id);
-
-  data.image_path = publicUrl;
-
   return { data };
 };
 
-export const getTopicsAction = async (courseId: string) => {
+export const getCourseTopicsAction = async (courseId: string) => {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -145,10 +147,30 @@ export const updateCourseDetails = async (formData: FormData) => {
   if (error) {
     return { error };
   }
+
   if (image) {
-    const {} = supabase.storage
+    const { data: uploadImage, error: uploadError } = await supabase.storage
       .from("thumbnails")
       .upload(`${id}`, image, { upsert: true });
+
+    if (uploadError) {
+      return { error: uploadError };
+    }
+
+    // Obter a URL pública após o upload
+    const { data: publicUrlData } = supabase.storage
+      .from("thumbnails")
+      .getPublicUrl(`${id}`);
+
+    // Atualizar o curso com a URL da imagem
+    const { data: updateData, error: updateError } = await supabase
+      .from("courses")
+      .update({ image_path: publicUrlData.publicUrl })
+      .eq("id", id);
+
+    if (updateError) {
+      return { error: updateError };
+    }
   }
 
   return { data };
@@ -184,12 +206,14 @@ export const deleteTopic = async (topicId: string) => {
 
 export const createNewLesson = async (formData: FormData) => {
   const supabase = createClient();
-
   const course_id = formData.get("course_id") as string;
-
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const video = formData.get("video") as File;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
     .from("lessons")
@@ -199,17 +223,27 @@ export const createNewLesson = async (formData: FormData) => {
   if (error) {
     return { error };
   }
-  const newLesson = data[0];
 
-  const { error: videoError } = await supabase.storage
+  const lessonId = data[0]?.id.toString();
+
+  const path = `${user?.id?.toString()}/${course_id}/${lessonId}`;
+
+  const { data: videoData, error: videoError } = await supabase.storage
     .from("public-videos")
-    .upload(newLesson.id.toString(), video);
+    .upload(path, video, {
+      upsert: true,
+    });
 
   if (videoError) {
     return { error: videoError };
   }
 
-  return { data: data[0] };
+  const {} = await supabase
+    .from("lessons")
+    .update({ video_path: videoData.path })
+    .eq("id", lessonId);
+
+  return { data };
 };
 
 export const getLessonVideoUrl = async (lessonId: string) => {

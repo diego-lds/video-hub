@@ -31,8 +31,7 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
     const { data, error } = await createNewLesson(formData);
 
-    setLoading(true);
-
+    setLoading(false);
     if (error) {
       console.log("Erro ao criar a aula", error);
     } else {

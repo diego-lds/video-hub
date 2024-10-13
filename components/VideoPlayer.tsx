@@ -8,11 +8,9 @@ import ReactPlayer from "react-player/lazy";
 
 interface Lesson {
   id: number;
-
   title: string;
   description: string;
-  video_path: string | null;
-
+  video_path: string;
   course_id: number;
 }
 
@@ -29,8 +27,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
 
     const { data } = supabase.storage
       .from("public-videos")
-      .getPublicUrl(currentLesson?.id.toString());
-
+      .getPublicUrl(currentLesson?.video_path.toString());
     setUrl(data?.publicUrl);
   };
 
@@ -41,7 +38,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
   const handleClick = async (lesson: Lesson) => {
     setCurrentLesson(lesson);
   };
-
+  console.log(url);
   return (
     <>
       {currentLesson && (
