@@ -10,14 +10,10 @@ import {
 } from "@/app/actions/courses";
 import CourseInfoForm from "./CourseInfoForm";
 import ImageUploader from "./ImageUploader";
-import TopicsList from "./TopicList222";
-import LessonsList from "./LessonList";
 import { Lesson } from "@/types";
 import Separator from "./Separator";
 import Button from "./Button";
-import AddTopicButton from "./AddTopicButton";
-import Input from "./Input";
-import GenericList from "./GenericList";
+import Link from "next/link";
 
 interface Topic {
   id: number;
@@ -51,7 +47,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
   const [lessons] = useState<Lesson[] | []>(courseLessons);
   const [image, setImage] = useState<string | null>(course.image_path);
   const [newImage, setNewImage] = useState<File | null>(null);
-  const [newTopic, setNewTopic] = useState<string | null>("");
+  const [newTopic, setNewTopic] = useState<string>("");
 
   const handleAddTopic = async () => {
     if (!newTopic) return;
@@ -133,14 +129,17 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
 
       <h2>Tópicos</h2>
       <div className="flex gap-3 mt-4">
-        <Input
+        <input
           type="text"
           value={newTopic}
           onChange={(e) => setNewTopic(e.target.value)}
           placeholder="Adicionar tópico"
+          className="shadow-sm border border-gray-300 rounded-lg w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
         />
 
-        <Button onClick={handleAddTopic}>Adicionar tópico</Button>
+        <Button size="lg" onClick={handleAddTopic}>
+          Adicionar tópico
+        </Button>
       </div>
 
       {
@@ -178,6 +177,9 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
         </ul>
       }
       <Separator />
+      <Button size="lg" onClick={handleAddTopic}>
+        <Link href={`/admin/new-lesson/${course.id}`}>Criar nova aula</Link>
+      </Button>
     </div>
   );
 };

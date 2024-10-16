@@ -19,7 +19,6 @@ export default async function EditCourse({
 
   return (
     <div className=" ">
-      <h1 className="text-3xl">{course?.title}</h1>
       {course && lessons && topics ? (
         <EditCourseForm course={course} lessons={lessons} topics={topics} />
       ) : (

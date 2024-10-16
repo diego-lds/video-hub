@@ -35,9 +35,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onChange }) => {
           <div className="flex text-sm text-gray-600">
             <label
               htmlFor="video-upload"
-              className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+              className="relative cursor-pointer bg-white rounded-md  text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
             >
-              <span>Carregar um vídeo</span>
+              <label>Carregar um vídeo</label>
               <input
                 id="video-upload"
                 name="video-upload"
@@ -48,7 +48,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onChange }) => {
                 required
               />
             </label>
-            <p className="pl-1">ou arraste e solte</p>
+            <label className="ml-1"> ou arraste e solte</label>
           </div>
           <p className="text-xs text-gray-500">Arquivos MP4, máximo 250MB</p>
           {fileName && (
