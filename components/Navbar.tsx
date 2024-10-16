@@ -1,22 +1,74 @@
-import Image from "next/image";
-import AuthButton from "./AuthButton";
+import * as React from "react";
 import Link from "next/link";
 
-export default async function Navbar() {
+import { cn } from "@/lib/utils";
+import Image from "@/components/Image";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import AuthButton from "./AuthButton";
+
+export function Navbar() {
   return (
-    <nav className="w-full flex justify-center items-center   border-b border-b-foreground/10 h-16 ">
-      <div className="w-full container flex justify-between items-center   text-sm">
-        <div className="flex justify-center items-center ">
-          <Image width={150} height={40} src="/logo_black.png" alt="Logo" />
-          <div className="flex justify-center items-center ">
-            <Link href="/" className="ml-10 mr-5">
-              Home
-            </Link>
-            <Link href="/admin">Admin</Link>
-          </div>
-        </div>
-        <AuthButton />
+    <nav className="h-16 flex items-center justify-between border-b px-16">
+      <div className="flex gap-10">
+        <Image src="/logo_black.png" alt="logo" width={150} height={40} />
+        <NavMenu />
       </div>
+      <AuthButton />
     </nav>
   );
 }
+
+const NavMenu = () => {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <Link href="/" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Home
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link href="/admin" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Admin
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+};
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  );
+});
+ListItem.displayName = "ListItem";
