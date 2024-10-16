@@ -16,6 +16,7 @@ import ImageUploader from "./ImageUploader";
 import TopicsList from "./TopicList";
 import LessonsList from "./LessonList";
 import { Lesson } from "@/types";
+import Separator from "./Separator";
 
 interface Topic {
   id?: string;
@@ -105,8 +106,8 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
   };
 
   return (
-    <div className="w-full p-6 bg-white rounded-lg shadow-md space-y-6">
-      <h1 className="text-xl font-bold text-gray-800 mb-6">Editar Curso</h1>
+    <div className="p-6   bg-white rounded-lg shadow-md space-y-6">
+      <h1 className="mb-6">Editar Curso</h1>
 
       <form onSubmit={handleSubmit}>
         <CourseInfoForm
@@ -128,11 +129,13 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
         </button>
       </form>
 
+      <Separator />
       <TopicsList
         topics={topics}
         onAddTopic={handleAddTopic}
         onDeleteTopic={handleDeleteTopic}
       />
+      <Separator />
 
       <LessonsList lessons={lessons} courseId={course.id} />
     </div>

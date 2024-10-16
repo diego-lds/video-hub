@@ -20,7 +20,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   return (
     <div>
       <div className="mb-6">
-        <label className="block text-lg font-semibold text-gray-800 mb-2">
+        <label className=" text-lg font-semibold text-gray-800 mb-2">
           Foto de capa atual:
         </label>
         <Image
@@ -30,7 +30,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
           height={150}
           className="h-auto w-auto rounded-md mb-2"
         />
-        <label className="block text-lg font-semibold text-gray-800 mb-2">
+        <label className=" text-lg font-semibold text-gray-800 mb-2">
           Título:
         </label>
         <input
@@ -41,7 +41,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
         />
       </div>
       <div className="mb-6">
-        <label className="block text-lg font-semibold text-gray-800 mb-2">
+        <label className=" text-lg font-semibold text-gray-800 mb-2">
           Descrição:
         </label>
         <textarea

@@ -6,9 +6,9 @@ import { getMyCoursesAction } from "../actions/courses";
 export default async function Admin() {
   const { data: courses } = await getMyCoursesAction();
   return (
-    <div className="container p-2 flex flex-col">
-      <h1 className="text-4xl font-bold mb-4">Meus cursos | edição</h1>
-      <ul className="list-none p-2 border border-gray-300 rounded-sm mt-4">
+    <div className="p-4 flex flex-col ">
+      <h1>Meus cursos | edição</h1>
+      <ul className="list-none p-2 rounded-sm mt-4">
         {courses?.map((course) => (
           <li
             key={course.id}
@@ -19,18 +19,16 @@ export default async function Admin() {
               className="flex items-center"
             >
               <Image
-                width={150}
-                height={120}
-                src={course.image_path || "/placeholder.jpg"}
+                width={256}
+                height={150}
+                src={course.image_path || "/placeholder.png"}
                 alt={course.title}
-                className="mr-4 aspect-video w-32 outline object-cover"
+                className="mr-4 aspect-video min-w-64 min-h-32  object-cover"
               />
               <div>
-                <h2 className="text-lg font-semibold">{course.title}</h2>
-                <p className="text-sm my-3 text-pretty">{course.description}</p>
-                <p className="text-sm font-semibold">
-                  Criado em:{formatDateString(course.created_at)}
-                </p>
+                <h3>{course.title}</h3>
+                <p>{course.description}</p>
+                <p>Criado em: {formatDateString(course.created_at)}</p>
               </div>
             </a>
           </li>

@@ -1,4 +1,11 @@
 import { GeistSans } from "geist/font/sans";
+import { Nunito } from "next/font/google";
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  display: "swap",
+});
+
 import "./globals.css";
 
 import Navbar from "@/components/Navbar";
@@ -21,15 +28,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="en" className={nunito.className}>
       <body className="bg-background text-foreground">
-        <Navbar />
-        <PageContainer>
-          <main className="min-h-screen mx-32 my-4 flex flex-col items-center">
-            {children}
-          </main>
-        </PageContainer>
-        <Footer />
+        <div>
+          <Navbar />
+          <main className="max-w-5xl mx-auto ">{children}</main>
+
+          <footer className="w-full h-30  border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs bg-emerald-600">
+            <p>
+              <a
+                className="text-white hover:underline"
+                href="https://github.com/diego-lds"
+              >
+                Criado por Diego Lopes &copy; {new Date().getFullYear()}
+              </a>
+            </p>
+          </footer>
+        </div>
       </body>
     </html>
   );

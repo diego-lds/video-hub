@@ -1,7 +1,5 @@
 "use client";
 
-import { getLessonVideoUrl } from "@/app/actions/courses";
-import { secondsToMinutes } from "@/utils/formatUtils";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
@@ -27,7 +25,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
 
     const { data } = supabase.storage
       .from("public-videos")
-      .getPublicUrl(currentLesson?.video_path.toString());
+      .getPublicUrl(currentLesson?.video_path.toString() || "");
     setUrl(data?.publicUrl);
   };
 
@@ -38,18 +36,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
   const handleClick = async (lesson: Lesson) => {
     setCurrentLesson(lesson);
   };
-  console.log(url);
   return (
     <>
-      {currentLesson && (
-        <h1 className="text-3xl font-bold">{currentLesson.title}</h1>
-      )}
-      {currentLesson && (
-        <h2 className="text-sm">{currentLesson.description}</h2>
-      )}
-
-      <main className="flex flex-col mt-2">
-        <div className="w-full h-96 aspect-ratio-16/9 border border-gray-300 rounded-sm mb-5">
+      <main className="flex flex-col max-w-3xl mt-2">
+        {currentLesson && (
+          <h1 className="text-3xl font-bold">{currentLesson.title}</h1>
+        )}
+        {currentLesson && (
+          <h2 className="text-sm">{currentLesson.description}</h2>
+        )}
+        <div className="w-full h-96 aspect-video border border-gray-300 rounded-sm mb-5">
           {url ? (
             <ReactPlayer
               url={url}
@@ -59,18 +55,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
               width="100%"
             />
           ) : (
-            <div className="h-96  flex flex-col items-center justify-center">
+            <div className="flex flex-1  aspect-video  items-center justify-center">
               <p className="text-3xl font-bold">Carregando...</p>
             </div>
           )}
         </div>
         <div>
           <ul>
-            <h1 className="text-2xl">Conteúdo do curso</h1>
+            <h1 className="text-2xl">Aulas</h1>
             {lessons?.map((lesson, index) => (
               <li
                 key={index}
-                className={`flex flex-col  border-gray-300 p-2 hover:bg-slate-100 hover:text-blue-500 ${
+                className={`flex flex-col  border-gray-300 p-2 cursor-pointer hover:bg-slate-100 hover:text-blue-500 ${
                   currentLesson?.id === lesson.id
                     ? "border border-gray-500"
                     : ""
@@ -78,10 +74,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
                 onClick={() => handleClick(lesson)}
               >
                 <p className="flex items-center gap-2">
-                  <span className="text-md text-red-500 border border-red-300 cursor-pointer px-1 select-none">
+                  <span className="text-md text-red-500 border border-red-300  px-1 select-none">
                     ▶️
                   </span>
-                  <span className="text-md font-bold">{lesson.title}</span>
+                  <span className="text-md font-bold">Aula {index + 1} - </span>
+
+                  <span className="text-md font-bold underline">
+                    {lesson.title}
+                  </span>
                 </p>
               </li>
             ))}

@@ -121,7 +121,7 @@ export const getCourseTopicsAction = async (courseId: string) => {
 
   const { data, error } = await supabase
     .from("learning_topics")
-    .select("id, topic, course_id")
+    .select("*")
     .eq("course_id", courseId);
 
   if (error) {

@@ -11,8 +11,10 @@ const NewLesson = async ({ params }: { params: { id: string } }) => {
   } = await supabase.auth.getUser();
 
   return (
-    <div className="w-full">
-      <NewLessonForm courseId={id} />
+    <div className="">
+      <div className=" ">
+        <NewLessonForm courseId={id} />
+      </div>
     </div>
   );
 };

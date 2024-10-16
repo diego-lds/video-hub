@@ -7,13 +7,7 @@ export default async function Navbar() {
     <nav className="w-full flex justify-center items-center   border-b border-b-foreground/10 h-16 ">
       <div className="w-full container flex justify-between items-center   text-sm">
         <div className="flex justify-center items-center ">
-          <Image
-            className="mb-3"
-            width={40}
-            height={40}
-            src="/cam.svg"
-            alt="Logo"
-          />
+          <Image width={150} height={40} src="/logo_black.png" alt="Logo" />
           <div className="flex justify-center items-center ">
             <Link href="/" className="ml-10 mr-5">
               Home
