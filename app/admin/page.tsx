@@ -2,44 +2,43 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatDateString } from "@/utils/formatUtils";
 import { getMyCoursesAction } from "../actions/courses";
+import Separator from "@/components/Separator";
+import Button from "@/components/Button";
 
 export default async function Admin() {
   const { data: courses } = await getMyCoursesAction();
   return (
-    <div className="p-4 flex flex-col ">
+    <div className="flex flex-col p-12">
       <h1>Meus cursos | edição</h1>
-      <ul className="list-none p-2 rounded-sm mt-4">
+      <ul className="my-12">
         {courses?.map((course) => (
-          <li
-            key={course.id}
-            className="mb-2 ml-2 border-b p-2 border-gray-300 hover:bg-gray-200"
-          >
-            <a
-              href={`/admin/edit-course/${course.id}`}
-              className="flex items-center"
+          <Link href={`/admin/edit-course/${course.id}`}>
+            <li
+              key={course.id}
+              className="flex p-4 hover:bg-slate-200 transition duration-300 ease-in-out"
             >
-              <Image
-                width={256}
-                height={150}
-                src={course.image_path || "/placeholder.png"}
-                alt={course.title}
-                className="mr-4 aspect-video min-w-64 min-h-32  object-cover"
-              />
-              <div>
-                <h3>{course.title}</h3>
-                <p>{course.description}</p>
-                <p>Criado em: {formatDateString(course.created_at)}</p>
+              <div className="min-w-64 min-h-36">
+                <Image
+                  width={256}
+                  height={144}
+                  src={course.image_path || "/placeholder.png"}
+                  alt={course.title}
+                  className="aspect-video object-cover rounded"
+                />
               </div>
-            </a>
-          </li>
+              <div className="flex flex-col justify-between px-4">
+                <h4 className="underline">{course.title}</h4>
+                <p>{course.description}</p>
+                <span>Criado em: {formatDateString(course.created_at)}</span>
+              </div>
+            </li>
+            <Separator />
+          </Link>
         ))}
       </ul>
-      <Link
-        href="/admin/new-course"
-        className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded text-center shadow mt-4"
-      >
-        + novo curso
-      </Link>
+      <Button>
+        <Link href="/admin/new-course">Novo Curso</Link>
+      </Button>
     </div>
   );
 }

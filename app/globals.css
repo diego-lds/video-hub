@@ -95,7 +95,7 @@
   /* Estilos para listas */
   ul,
   ol {
-    @apply list-inside list-disc;
+    @apply list-inside list-none;
   }
 
   /* Estilos para citações */

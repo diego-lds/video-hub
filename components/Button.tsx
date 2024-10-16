@@ -1,19 +1,27 @@
 import React from "react";
+import { Button as Btn } from "@/components/ui/button";
 
 interface ButtonProps {
   children: React.ReactNode;
   onClick?: () => void;
-  className?: string;
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
 }
 
-const Button: React.FC<ButtonProps> = ({ children, onClick, className }) => {
-  const classes = className
-    ? className
-    : "text-white max-w-lg h-12 bg-emerald-600 px-4 py-2 rounded-sm";
+const Button: React.FC<ButtonProps> = ({
+  children,
+  onClick,
+  variant = "default",
+}) => {
   return (
-    <button className={classes} onClick={onClick}>
+    <Btn onClick={onClick} variant={variant}>
       {children}
-    </button>
+    </Btn>
   );
 };
 
