@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export const getCoursesAction = async () => {
   const supabase = createClient();
@@ -176,15 +177,14 @@ export const updateCourseDetails = async (formData: FormData) => {
   return { data };
 };
 
-export const addNewTopic = async (formData: FormData) => {
+export const addNewTopic2 = async (courseId: string, formData: FormData) => {
   const supabase = createClient();
-  const course_id = formData.get("course_id") as string;
   const topic = formData.get("topic") as string;
+  console.log(333333333333333333333);
 
   const { data, error } = await supabase
     .from("learning_topics")
-    .insert({ course_id, topic })
-    .select();
+    .insert({ courseId, topic });
 
   if (error) {
     return { error };
@@ -257,5 +257,25 @@ export const getLessonVideoUrl = async (lessonId: string) => {
     return { error };
   }
   console.log(data);
+  return { data };
+};
+
+export const addNewTopic = async (formData: FormData) => {
+  const supabase = createClient();
+
+  const topic = formData.get("topic") as string;
+  const course_id = formData.get("course_id") as string;
+
+  console.log({ topic });
+
+  const { data, error } = await supabase
+    .from("learning_topics")
+    .insert({ topic, course_id })
+    .select();
+
+  if (error) {
+    return { error };
+  }
+
   return { data };
 };

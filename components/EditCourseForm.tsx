@@ -1,25 +1,26 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import Button from "@/components/Button";
-import Link from "next/link";
-import Image from "next/image";
+
 import { useState } from "react";
 import {
   addNewTopic,
   deleteTopic,
   updateCourseDetails,
 } from "@/app/actions/courses";
-import { processImageFile } from "@/utils/imageUtils";
 import CourseInfoForm from "./CourseInfoForm";
 import ImageUploader from "./ImageUploader";
-import TopicsList from "./TopicList";
+import TopicsList from "./TopicList222";
 import LessonsList from "./LessonList";
 import { Lesson } from "@/types";
 import Separator from "./Separator";
+import Button from "./Button";
+import AddTopicButton from "./AddTopicButton";
+import Input from "./Input";
+import GenericList from "./GenericList";
 
 interface Topic {
-  id?: string;
+  id: number;
   course_id: string;
   topic: string;
 }
@@ -50,25 +51,29 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
   const [lessons] = useState<Lesson[] | []>(courseLessons);
   const [image, setImage] = useState<string | null>(course.image_path);
   const [newImage, setNewImage] = useState<File | null>(null);
-  console.log(lessons);
-  const handleAddTopic = async (topic: string) => {
-    if (!topic) return;
+  const [newTopic, setNewTopic] = useState<string | null>("");
+
+  const handleAddTopic = async () => {
+    if (!newTopic) return;
 
     const formData = new FormData();
     formData.set("course_id", course.id.toString());
-    formData.set("topic", topic);
+    formData.set("topic", newTopic);
 
     const { data, error } = await addNewTopic(formData);
+
     if (error) {
       console.log(error);
     } else {
       setTopics([...topics, data[0]]);
+      setNewTopic("");
       console.log("Tópico adicionado com sucesso!");
     }
   };
 
-  const handleDeleteTopic = async (topicId: string) => {
-    const { error } = await deleteTopic(topicId);
+  const handleDeleteTopic = async (topicId: number) => {
+    if (!topicId) return;
+    const { error } = await deleteTopic(topicId.toString());
     if (error) {
       console.log(error);
     } else {
@@ -108,7 +113,6 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
   return (
     <div className="p-6   bg-white rounded-lg shadow-md space-y-6">
       <h1 className="mb-6">Editar Curso</h1>
-
       <form onSubmit={handleSubmit}>
         <CourseInfoForm
           title={title}
@@ -121,23 +125,59 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
 
         <ImageUploader onImageChange={handleImageChange} />
 
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 my-4 rounded-lg"
-        >
-          Atualizar Informações do curso
-        </button>
+        <div className="mt-2">
+          <Button type="submit">Atualizar Informações do curso</Button>
+        </div>
       </form>
-
-      <Separator />
-      <TopicsList
-        topics={topics}
-        onAddTopic={handleAddTopic}
-        onDeleteTopic={handleDeleteTopic}
-      />
       <Separator />
 
-      <LessonsList lessons={lessons} courseId={course.id} />
+      <h2>Tópicos</h2>
+      <div className="flex gap-3 mt-4">
+        <Input
+          type="text"
+          value={newTopic}
+          onChange={(e) => setNewTopic(e.target.value)}
+          placeholder="Adicionar tópico"
+        />
+
+        <Button onClick={handleAddTopic}>Adicionar tópico</Button>
+      </div>
+
+      {
+        <ul className="">
+          {topics &&
+            topics?.map((topic) => (
+              <li key={topic.id} className="flex justify-between p-1">
+                <label className="underline">{topic.topic}</label>
+                <Button
+                  variant={"link"}
+                  onClick={() => handleDeleteTopic(topic.id)}
+                >
+                  <span className="underline text-red-500">Deletar Topico</span>
+                </Button>
+              </li>
+            ))}
+        </ul>
+      }
+
+      <h2>Aulas</h2>
+      {
+        <ul className="">
+          {lessons &&
+            lessons?.map((lesson) => (
+              <li key={lesson.id} className="flex justify-between p-1">
+                <label className="underline">{lesson.title}</label>
+                <Button
+                  variant={"link"}
+                  onClick={() => handleDeleteTopic(lesson.id)}
+                >
+                  <span className="underline text-red-500">Deletar aula</span>
+                </Button>
+              </li>
+            ))}
+        </ul>
+      }
+      <Separator />
     </div>
   );
 };

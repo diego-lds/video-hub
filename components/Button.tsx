@@ -1,17 +1,5 @@
 import React from "react";
-import { Button as Btn } from "@/components/ui/button";
-
-interface ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
-}
+import { Button as Btn, ButtonProps } from "@/components/ui/button";
 
 const Button: React.FC<ButtonProps> = ({
   children,

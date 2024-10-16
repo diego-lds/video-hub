@@ -2,7 +2,7 @@ import React from "react";
 import CustomImage from "next/image";
 
 interface ImageProps {
-  src: string;
+  src?: string | null;
   alt: string;
   className?: string;
   width?: number;
@@ -10,7 +10,7 @@ interface ImageProps {
 }
 
 const Image: React.FC<ImageProps> = ({
-  src,
+  src = "/placeholder.png",
   alt,
   className,
   width = 200,
