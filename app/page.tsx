@@ -1,6 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
-import CourseCard from "@/components/CourseCard";
+import Image from "@/components/Image";
+import Card from "@/components/Card";
 import Separator from "@/components/Separator";
 import { getCoursesAction } from "./actions/courses";
 
@@ -8,16 +7,10 @@ export default async function Index() {
   const { data: courses } = await getCoursesAction();
 
   return (
-    <div>
-      <div className="flex flex-col  lg:flex-row  justify-between">
-        <div className="w-full lg:w-1/2">
-          <Image
-            width={474}
-            height={125}
-            src="/logo.png"
-            alt="Logo"
-            className="mb-4"
-          />
+    <>
+      <main className="flex flex-col lg:flex-row">
+        <div>
+          <Image width={474} height={125} src="/logo.png" alt="Logo" />
 
           <h3>Crie e disponibilize seus cursos online com facilidade!</h3>
           <p>
@@ -27,22 +20,27 @@ export default async function Index() {
             vender seus cursos online, sem complicações técnicas.
           </p>
         </div>
-        <Image src="/hero.svg" alt="Hero image" width={500} height={500} />
-      </div>
+        <Image src="/hero.svg" alt="Hero" width={500} height={500} />
+      </main>
 
-      <h1>Todos os cursos</h1>
-      <Separator />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-        {courses?.map((course) => (
-          <Link key={course.id} href={`/course/${course.id}`}>
-            <CourseCard
-              imagePath={course.image_path}
-              title={course.title}
-              description={course.description}
-            />
-          </Link>
-        ))}
-      </div>
-    </div>
+      {courses && (
+        <section>
+          <h1>Todos os cursos</h1>
+          <Separator />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+            <ul>
+              {courses.map((course) => (
+                <Card
+                  key={course.id}
+                  imagePath={course.image_path}
+                  title={course.title}
+                  description={course.description}
+                />
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+    </>
   );
 }
