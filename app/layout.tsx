@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground">
         <div className="flex flex-col min-h-screen">
           <Navbar />
-          <main className="flex-grow mx-8 py-8 sm:mx-16 md:mx-24 lg:mx-32 xl:mx-64">
+          <main className="flex-grow mx-8 py-8 sm:mx-16 md:mx-24 lg:mx- xl:mx-64">
             {children}
           </main>
 

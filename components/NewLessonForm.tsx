@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createNewLesson } from "@/app/actions/courses";
-import VideoUpload from "./VideoUpload";
+import FileUpload from "./FileUpload";
 import Button from "./Button";
 export default function NewLessonForm({ courseId }: { courseId: string }) {
   const [title, setTitle] = useState("");
@@ -13,10 +13,6 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
   const router = useRouter();
 
-  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setVideo(file ? file : null);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     if (!video) return;
@@ -76,11 +72,10 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
             required
           />
         </div>
-
-        <VideoUpload onChange={setVideo} />
+        <FileUpload />
 
         <Button type="submit" disabled={loading}>
-          {loading ? "Criando..." : "Criar aula"}
+          {loading ? "Criando..." : "Criar daula"}
         </Button>
       </form>
     </div>

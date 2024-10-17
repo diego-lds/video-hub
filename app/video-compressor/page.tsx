@@ -1,6 +1,6 @@
 "use client";
 import Compressor from "@/components/Compressor";
-import VideoUpload from "@/components/VideoUpload";
+import VideoUpload from "@/components/FileUpload";
 
 const VideoCompressor = () => {
   return (

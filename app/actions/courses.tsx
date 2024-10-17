@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-
+import * as tus from "tus-js-client";
 export const getCoursesAction = async () => {
   const supabase = createClient();
 
@@ -278,4 +278,73 @@ export const addNewTopic = async (formData: FormData) => {
   }
 
   return { data };
+};
+
+export const uploadVideo = async (formData: FormData) => {
+  const supabase = createClient();
+
+  const topic = formData.get("topic") as string;
+  const course_id = formData.get("course_id") as string;
+
+  console.log({ topic });
+
+  const { data, error } = await supabase
+    .from("learning_topics")
+    .insert({ topic, course_id })
+    .select();
+
+  if (error) {
+    return { error };
+  }
+
+  return { data };
+};
+
+const uploadFile = async (bucketName: string, fileName: string, file: File) => {
+  const supabase = createClient();
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  const projectId = "gnayrcyzxnrrcaqjmsky"; // Your Supabase project ID
+  return new Promise((resolve, reject) => {
+    const upload = new tus.Upload(file, {
+      endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      headers: {
+        authorization: `Bearer ${session?.access_token}`,
+        "x-upsert": "true",
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      metadata: {
+        bucketName: bucketName,
+        objectName: fileName,
+        contentType: file.type,
+        cacheControl: "3600",
+      },
+      chunkSize: 6 * 1024 * 1024, // 6MB chunk size
+      onError: function (error) {
+        console.error("Upload failed:", error);
+        reject(error);
+      },
+      onProgress: function (bytesUploaded, bytesTotal) {
+        const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
+        return +percentage; // Update progress state
+      },
+      onSuccess: function () {
+        console.log("Upload successful! File URL:", upload.url);
+        resolve(upload.url); // Resolve with the file URL
+      },
+    });
+
+    // Check if there are any previous uploads to continue.
+    upload.findPreviousUploads().then(function (previousUploads) {
+      if (previousUploads.length) {
+        upload.resumeFromPreviousUpload(previousUploads[0]);
+      }
+      upload.start(); // Start the upload
+    });
+  });
 };
