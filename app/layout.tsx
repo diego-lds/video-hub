@@ -30,9 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={nunito.className}>
       <body className="bg-background text-foreground">
-        <div>
+        <div className="flex flex-col min-h-screen">
           <Navbar />
-          <main className="max-w-5xl mx-auto ">{children}</main>
+          <main className="flex-grow mx-8 py-8 sm:mx-16 md:mx-24 lg:mx-32 xl:mx-64">
+            {children}
+          </main>
 
           <Footer />
         </div>

@@ -1,27 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 interface VideoUploadProps {
   onChange: (file: File | null) => void;
 }
 
 const VideoUpload: React.FC<VideoUploadProps> = ({ onChange }) => {
-  const [fileName, setFileName] = useState<string | null>(null);
-
-  const handleVideoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    onChange(file ? file : null);
-    setFileName(file ? file.name : null);
-  };
-
   return (
     <div>
-      <label
-        htmlFor="video"
-        className="block text-sm font-medium text-gray-700 mb-1"
-      >
-        Vídeo da Aula
-      </label>
       <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
         <div className="space-y-1 text-center">
           <svg
@@ -44,18 +30,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onChange }) => {
                 type="file"
                 accept="video/*"
                 className="sr-only"
-                onChange={handleVideoChange}
+                onChange={onChange}
                 required
               />
             </label>
             <label className="ml-1"> ou arraste e solte</label>
           </div>
           <p className="text-xs text-gray-500">Arquivos MP4, máximo 250MB</p>
-          {fileName && (
-            <p className="mt-2 text-lg font-semibold text-blue-600">
-              Arquivo: {fileName}
-            </p>
-          )}
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ import Button from "@/components/Button";
 export default async function Admin() {
   const { data: courses } = await getMyCoursesAction();
   return (
-    <div className="flex flex-col p-12">
+    <div className="flex flex-col">
       <h1>Meus cursos | edição</h1>
       <ul className="my-12">
         {courses?.map((course) => (
