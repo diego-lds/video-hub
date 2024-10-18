@@ -3,34 +3,58 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createNewLesson } from "@/app/actions/courses";
-import FileUpload from "./FileUpload";
 import Button from "./Button";
+import useFileUpload from "@/app/hooks/useFileUpload";
+import InputVideo from "./InputVideo";
+import { Progress } from "./ui/progress";
 export default function NewLessonForm({ courseId }: { courseId: string }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [video, setVideo] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const { progress, uploading, uploadFile } = useFileUpload();
 
   const router = useRouter();
 
+  const bucketName = "public-videos";
+
+  const handleFileChange = (file: File | null) => {
+    setFile(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    if (!video) return;
     e.preventDefault();
-    const formData = new FormData();
 
+    if (!file) return;
+
+    if (file.size >= 50 * 1024 * 1024) {
+      setFile(null);
+      alert("O arquivo deve ser menor que 50 MB.");
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("course_id", courseId.toString());
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("video", video);
     setLoading(true);
 
     const { data, error } = await createNewLesson(formData);
 
     setLoading(false);
+
     if (error) {
       console.log("Erro ao criar a aula", error);
     } else {
+      const lessonId = data.id;
+      const path = `lessons/${lessonId}/${file.name}`;
+      await uploadFile(bucketName, path, file)
+        .then((url) => {
+          console.log("Arquivo enviado com sucesso:", url);
+        })
+        .catch((error) => {
+          console.error("Erro ao enviar o arquivo:", error);
+        });
       alert("Aula criada com sucesso");
       router.push("/admin/edit-course/" + courseId);
     }
@@ -72,11 +96,16 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
             required
           />
         </div>
-        <FileUpload />
+
+        <InputVideo onVideoChange={handleFileChange} />
 
         <Button type="submit" disabled={loading}>
-          {loading ? "Criando..." : "Criar daula"}
+          {loading ? "Criando aula..." : "Criar aula"}
         </Button>
+
+        {progress > 0 && <p>Subindo video para o servidor</p>}
+
+        <Progress value={progress} />
       </form>
     </div>
   );

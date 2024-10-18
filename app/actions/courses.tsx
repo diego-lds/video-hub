@@ -1,8 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
-import * as tus from "tus-js-client";
+
 export const getCoursesAction = async () => {
   const supabase = createClient();
 
@@ -209,11 +208,6 @@ export const createNewLesson = async (formData: FormData) => {
   const course_id = formData.get("course_id") as string;
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
-  const video = formData.get("video") as File;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { data, error } = await supabase
     .from("lessons")
@@ -224,26 +218,7 @@ export const createNewLesson = async (formData: FormData) => {
     return { error };
   }
 
-  const lessonId = data[0]?.id.toString();
-
-  const path = `${user?.id?.toString()}/${course_id}/${lessonId}`;
-
-  const { data: videoData, error: videoError } = await supabase.storage
-    .from("public-videos")
-    .upload(path, video, {
-      upsert: true,
-    });
-
-  if (videoError) {
-    return { error: videoError };
-  }
-
-  const {} = await supabase
-    .from("lessons")
-    .update({ video_path: videoData.path })
-    .eq("id", lessonId);
-
-  return { data };
+  return { data: data[0] };
 };
 
 export const getLessonVideoUrl = async (lessonId: string) => {
@@ -298,53 +273,4 @@ export const uploadVideo = async (formData: FormData) => {
   }
 
   return { data };
-};
-
-const uploadFile = async (bucketName: string, fileName: string, file: File) => {
-  const supabase = createClient();
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  const projectId = "gnayrcyzxnrrcaqjmsky"; // Your Supabase project ID
-  return new Promise((resolve, reject) => {
-    const upload = new tus.Upload(file, {
-      endpoint: `https://${projectId}.supabase.co/storage/v1/upload/resumable`,
-      retryDelays: [0, 3000, 5000, 10000, 20000],
-      headers: {
-        authorization: `Bearer ${session?.access_token}`,
-        "x-upsert": "true",
-      },
-      uploadDataDuringCreation: true,
-      removeFingerprintOnSuccess: true,
-      metadata: {
-        bucketName: bucketName,
-        objectName: fileName,
-        contentType: file.type,
-        cacheControl: "3600",
-      },
-      chunkSize: 6 * 1024 * 1024, // 6MB chunk size
-      onError: function (error) {
-        console.error("Upload failed:", error);
-        reject(error);
-      },
-      onProgress: function (bytesUploaded, bytesTotal) {
-        const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-        return +percentage; // Update progress state
-      },
-      onSuccess: function () {
-        console.log("Upload successful! File URL:", upload.url);
-        resolve(upload.url); // Resolve with the file URL
-      },
-    });
-
-    // Check if there are any previous uploads to continue.
-    upload.findPreviousUploads().then(function (previousUploads) {
-      if (previousUploads.length) {
-        upload.resumeFromPreviousUpload(previousUploads[0]);
-      }
-      upload.start(); // Start the upload
-    });
-  });
 };

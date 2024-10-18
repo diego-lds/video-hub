@@ -4,7 +4,6 @@ import { createClient } from "@/utils/supabase/client";
 import * as tus from "tus-js-client";
 import InputVideo from "./InputVideo";
 import Button from "./Button";
-import { Input } from "./ui/input";
 import { Progress } from "./ui/progress";
 
 const FileUpload = () => {
@@ -88,20 +87,10 @@ const FileUpload = () => {
       });
   };
 
-  const handleFileChange = (file: File | null) => {
-    if (file && file.size >= 50 * 1024 * 1024) {
-      alert("O arquivo deve ser menor que 50 MB.");
-
-      return;
-    }
-    setFile(file);
-  };
-
   console.log(file);
 
   return (
     <div>
-      <InputVideo onVideoChange={handleFileChange} />
       {file && (
         <Button
           variant={`ghost`}
