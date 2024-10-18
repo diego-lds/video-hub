@@ -7,18 +7,19 @@ type InputVideoProps = {
 const InputVideo: React.FC<InputVideoProps> = ({ onVideoChange }) => {
   return (
     <div className="">
-      <div className="border border-stone-400 rounded-lg ">
+      <div className="border border-slate-700 rounded-lg  hover:border-slate-500">
         <input
           onChange={(e) => {
             const file = e.target.files ? e.target.files[0] : null;
             onVideoChange(file);
           }}
           type="file"
-          className="text-sm text-stone-600
-        file:mr-5 file:py-2 file:px-5 file:border-0
-         file:text-medium file:rounded-l-lg
-      file:bg-stone-600 file:text-white
-        hover:file:cursor-pointer hover:file:bg-stone-500"
+          required
+          className="w-full text-sm text-slate-700 hover:text-slate-500
+        file:mr-4 file:py-2 file:px-5 file:border-0
+         file:text-medium file:rounded-l-md
+      file:bg-slate-700 file:text-white
+        hover:file:cursor-pointer hover:file:bg-slate-500"
         ></input>
       </div>
 
