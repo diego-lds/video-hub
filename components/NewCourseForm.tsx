@@ -4,9 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { createCourse } from "@/app/actions/courses";
+import { Button } from "./ui/button";
 export default function NewCourseForm() {
-  const supabase = createClient();
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -14,7 +13,7 @@ export default function NewCourseForm() {
   const [successMessage, setSuccessMessage] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const router = useRouter(); // Inicialize o hook useRouter
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,12 +21,11 @@ export default function NewCourseForm() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
-
     if (imageFile) {
       formData.append("image", imageFile);
     }
 
-    const { error } = await createCourse(formData);
+    const { data, error } = await createCourse(formData);
 
     setLoading(false);
 
@@ -35,7 +33,7 @@ export default function NewCourseForm() {
       console.error("Error creating course:", error.message);
       alert("Failed to create course.");
     } else {
-      setSuccessMessage("Course created successfully!");
+      alert("Course created successfully!");
       router.push("/admin");
     }
   };
@@ -60,14 +58,14 @@ export default function NewCourseForm() {
           htmlFor="title"
           className="block text-sm font-medium text-gray-700"
         >
-          Course Title
+          Título
         </label>
         <input
           type="text"
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           required
         />
       </div>
@@ -76,13 +74,13 @@ export default function NewCourseForm() {
           htmlFor="description"
           className="block text-sm font-medium text-gray-700"
         >
-          Course Description
+          Descrição
         </label>
         <textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="mt-1 block w/full border-gray-300 rounded-md shadow-sm"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           rows={4}
           required
         />
@@ -122,13 +120,9 @@ export default function NewCourseForm() {
           </div>
         </div>
       )}
-      <button
-        type="submit"
-        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-600"
-        disabled={loading}
-      >
+      <Button type="submit" disabled={loading}>
         {loading ? "Creating..." : "Create Course"}
-      </button>
+      </Button>
       {successMessage && (
         <p className="text-green-500 mt-4">{successMessage}</p>
       )}

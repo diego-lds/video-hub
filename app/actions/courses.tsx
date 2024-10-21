@@ -1,17 +1,35 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export const getCoursesAction = async () => {
   const supabase = createClient();
 
-  const { data, error } = await supabase
-    .from("courses")
-    .select("id, title, description, image_path")
-    .order("created_at", { ascending: true });
+  const { data, error } = await supabase.from("courses").select("*");
+  console.log(error);
   if (error) {
     return { error };
   }
+  return { data };
+};
+
+export const getMyCoursesAction = async () => {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("owner", user?.id);
+
+  if (error) {
+    return { error };
+  }
+
   return { data };
 };
 
@@ -26,63 +44,48 @@ export const createCourse = async (formData: FormData) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
+  const { data: courseData, error: courseError } = await supabase
     .from("courses")
-    .insert({ title, description, created_by: user?.id })
+    .insert({ title, description, owner: user?.id })
     .select();
 
-  if (error) {
-    return { error };
+  if (courseError) {
+    return { error: courseError };
   }
 
-  if (image) {
-    const newCourseId = data[0].id.toString();
+  const newCourseId = courseData[0].id.toString();
 
-    const { error } = await supabase.storage
+  if (image) {
+    const { error: uploadError } = await supabase.storage
       .from("thumbnails")
       .upload(newCourseId, image, { upsert: true });
 
-    if (error) {
-      return { error };
+    if (uploadError) {
+      await supabase.from("courses").delete().eq("id", newCourseId);
+      return { error: uploadError };
     }
 
     const { data: publicUrlData } = supabase.storage
       .from("thumbnails")
-      .getPublicUrl(newCourseId);
+      .getPublicUrl(newCourseId, {
+        transform: {
+          width: 300,
+          height: 200,
+        },
+      });
 
-    const { data: updateData, error: updateError } = await supabase
+    const { error: updateError } = await supabase
       .from("courses")
-      .update({ image_path: publicUrlData.publicUrl })
+      .update({ image_url: publicUrlData.publicUrl })
       .eq("id", newCourseId);
 
     if (updateError) {
+      await supabase.from("courses").delete().eq("id", newCourseId);
       return { error: updateError };
     }
   }
 
-  return { data };
-};
-
-export const getMyCoursesAction = async () => {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data, error } = await supabase
-    .from("courses")
-    .select("id, title, description, image_path, created_at")
-    .eq("created_by", user?.id)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    return { error };
-  }
-
-  console.log(data);
-
-  return { data };
+  return { data: courseData };
 };
 
 export const getCourseLessonsAction = async (courseId: string) => {
@@ -105,7 +108,7 @@ export const getCoursesDetailsAction = async (courseId: string) => {
 
   const { data, error } = await supabase
     .from("courses")
-    .select("id,title,description,image_path")
+    .select("*")
     .eq("id", courseId)
     .single();
 
@@ -165,28 +168,13 @@ export const updateCourseDetails = async (formData: FormData) => {
     // Atualizar o curso com a URL da imagem
     const { data: updateData, error: updateError } = await supabase
       .from("courses")
-      .update({ image_path: publicUrlData.publicUrl })
+      .update({ image_url: publicUrlData.publicUrl })
       .eq("id", id);
 
+    revalidatePath("/admin");
     if (updateError) {
       return { error: updateError };
     }
-  }
-
-  return { data };
-};
-
-export const addNewTopic2 = async (courseId: string, formData: FormData) => {
-  const supabase = createClient();
-  const topic = formData.get("topic") as string;
-  console.log(333333333333333333333);
-
-  const { data, error } = await supabase
-    .from("learning_topics")
-    .insert({ courseId, topic });
-
-  if (error) {
-    return { error };
   }
 
   return { data };

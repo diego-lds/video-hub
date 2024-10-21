@@ -1,11 +1,12 @@
-import Image from "@/components/Image";
+import Image from "next/image";
 import Card from "@/components/Card";
 import Separator from "@/components/Separator";
 import { getCoursesAction } from "./actions/courses";
+import CourseCard from "@/components/CourseCard";
 
 export default async function Index() {
   const { data: courses } = await getCoursesAction();
-
+  console.log(courses);
   return (
     <>
       <div className=" ">
@@ -32,9 +33,9 @@ export default async function Index() {
             <Separator />
             <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
               {courses.map((course) => (
-                <Card
+                <CourseCard
                   key={course.id}
-                  imagePath={course.image_path}
+                  imagePath={course.image_url}
                   title={course.title}
                   description={course.description}
                 />

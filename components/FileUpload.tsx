@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import * as tus from "tus-js-client";
-import InputVideo from "./InputVideo";
+import InputVideo from "./FileInput";
 import Button from "./Button";
 import { Progress } from "./ui/progress";
 
@@ -75,10 +75,9 @@ const FileUpload = () => {
     }
 
     const bucketName = "public-videos"; // Replace with your bucket name
-    const fileName = `${Date.now()}-${file.name}`;
 
     setUploading(true);
-    uploadFile(bucketName, fileName, file)
+    uploadFile(bucketName, file.name, file)
       .then((url) => {
         console.log("File uploaded successfully:", url);
       })

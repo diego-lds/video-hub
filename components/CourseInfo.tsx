@@ -7,10 +7,9 @@ interface CourseInfoFormProps {
   image: string | null;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
-  onSubmit: (event: React.MouseEvent<HTMLFormElement>) => void;
 }
 
-const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
+const CourseInfo: React.FC<CourseInfoFormProps> = ({
   title,
   description,
   image,
@@ -28,7 +27,7 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
           alt="Course image"
           width={200}
           height={150}
-          className="h-auto w-auto rounded-md mb-2"
+          className="h-auto w-auto border mb-2"
         />
         <label className=" text-lg font-semibold text-gray-800 mb-2">
           Título:
@@ -55,4 +54,4 @@ const CourseInfoForm: React.FC<CourseInfoFormProps> = ({
   );
 };
 
-export default CourseInfoForm;
+export default CourseInfo;

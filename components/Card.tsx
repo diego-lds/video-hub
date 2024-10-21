@@ -5,7 +5,7 @@ import {
   CardTitle,
   Card as CustomCard,
 } from "@/components/ui/card";
-import Image from "./Image";
+import Image from "next/image";
 interface Card {
   title: string;
   description: string;
@@ -16,11 +16,11 @@ const Card: React.FC<Card> = ({ title, description, imagePath }) => {
   return (
     <CustomCard>
       <Image
-        width={362}
-        height={192}
+        width={300}
+        height={200}
         src={imagePath || "/placeholder.png"}
         alt={title}
-        className=" object-cover h-48 w-96  relative"
+        className=" object-fit sm:h-56 lg:h-64"
       />
       <CardHeader>
         <CardTitle>{title}</CardTitle>

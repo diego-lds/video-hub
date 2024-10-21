@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 
-// Tipagem para a função onVideoChange
-type InputVideoProps = {
-  onVideoChange: (file: File | null) => void;
+type FileInputProps = {
+  onChange: (file: File | null) => void;
+  label?: string;
 };
-const InputVideo: React.FC<InputVideoProps> = ({ onVideoChange }) => {
+const FileInput: React.FC<FileInputProps> = ({ onChange, label }) => {
   return (
     <div className="">
       <div className="border border-slate-700 rounded-lg  hover:border-slate-500">
         <input
           onChange={(e) => {
             const file = e.target.files ? e.target.files[0] : null;
-            onVideoChange(file);
+            onChange(file);
           }}
           type="file"
           required
@@ -23,11 +23,13 @@ const InputVideo: React.FC<InputVideoProps> = ({ onVideoChange }) => {
         ></input>
       </div>
 
-      <p className="mt-2 ml-1 text-sm text-stone-700" id="file_input_help">
-        Arquivos MP4, máximo 50MB.
-      </p>
+      {label && (
+        <p className="mt-2 ml-1 text-sm text-stone-700" id="file_input_help">
+          {label}
+        </p>
+      )}
     </div>
   );
 };
 
-export default InputVideo;
+export default FileInput;

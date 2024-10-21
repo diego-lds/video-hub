@@ -8,12 +8,15 @@ import {
   deleteTopic,
   updateCourseDetails,
 } from "@/app/actions/courses";
-import CourseInfoForm from "./CourseInfoForm";
+import CourseInfo from "./CourseInfo";
 import ImageUploader from "./ImageUploader";
 import { Lesson } from "@/types";
 import Separator from "./Separator";
 import Button from "./Button";
 import Link from "next/link";
+import InputFile from "./FileInput";
+import FileInput from "./FileInput";
+import { revalidatePath } from "next/cache";
 
 interface Topic {
   id: number;
@@ -31,7 +34,7 @@ interface Course {
   id: number;
   title: string;
   description: string;
-  image_path: string;
+  image_url: string;
 }
 
 const EditCourseForm: React.FC<CourseDetailsProps> = ({
@@ -45,7 +48,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
   const [description, setDescription] = useState(course.description);
   const [topics, setTopics] = useState<Topic[] | []>(courseTopics);
   const [lessons] = useState<Lesson[] | []>(courseLessons);
-  const [image, setImage] = useState<string | null>(course.image_path);
+  const [image, setImage] = useState<string | null>(course.image_url);
   const [newImage, setNewImage] = useState<File | null>(null);
   const [newTopic, setNewTopic] = useState<string>("");
 
@@ -86,6 +89,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     const formData = new FormData();
 
     formData.append("id", course?.id.toString());
@@ -99,9 +103,10 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
     const { error } = await updateCourseDetails(formData);
 
     if (error) {
-      console.error(error);
+      alert(error.message);
     } else {
       alert("Curso atualizado com sucesso!");
+
       router.push("/admin");
     }
   };
@@ -110,18 +115,20 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
     <div className="p-6   bg-white rounded-lg shadow-md space-y-6">
       <h1 className="mb-6">Editar Curso</h1>
       <form onSubmit={handleSubmit}>
-        <CourseInfoForm
+        <CourseInfo
           title={title}
           description={description}
           setTitle={setTitle}
           setDescription={setDescription}
-          onSubmit={handleSubmit}
           image={image}
         />
 
-        <ImageUploader onImageChange={handleImageChange} />
-
         <div className="mt-2">
+          <label>Atualizar foto de capa</label>
+          <FileInput onChange={handleImageChange} />
+        </div>
+
+        <div className="mt-5">
           <Button type="submit">Atualizar Informações do curso</Button>
         </div>
       </form>

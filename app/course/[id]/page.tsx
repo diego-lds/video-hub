@@ -9,13 +9,13 @@ import VideoPlayer from "@/components/VideoPlayer";
 const Course = async ({ params }: { params: { id: string } }) => {
   const id = params?.id.toString();
 
-  const { data: course } = await getCoursesDetailsAction(id);
+  const { data: course, error } = await getCoursesDetailsAction(id);
   const { data: topics } = await getCourseTopicsAction(id);
   const { data: lessons } = await getCourseLessonsAction(id);
-
+  console.log(courses, error);
   return (
     <div className="w-full flex items-center ">
-      <div className="flex flex-col  gap-10">
+      <div className="flex flex-col gap-10 ">
         <h1 className="text-3xl font-extrabold lg:text-4xl !leading-tight max-w-xl">
           {course?.title}
         </h1>

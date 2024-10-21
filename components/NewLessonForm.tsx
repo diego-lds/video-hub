@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createNewLesson } from "@/app/actions/courses";
 import Button from "./Button";
 import useFileUpload from "@/app/hooks/useFileUpload";
-import InputVideo from "./InputVideo";
+import InputVideo from "./FileInput";
 import { Progress } from "./ui/progress";
 export default function NewLessonForm({ courseId }: { courseId: string }) {
   const [title, setTitle] = useState("");

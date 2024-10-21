@@ -2,7 +2,7 @@ import * as React from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import Image from "@/components/Image";
+import Image from "next/image";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -11,8 +11,9 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import AuthButton from "./AuthButton";
+import { createClient } from "@/utils/supabase/server";
 
-export function Navbar() {
+export async function Navbar() {
   return (
     <nav className="h-16 flex items-center justify-between border-b px-16">
       <div className="flex gap-10">
@@ -24,7 +25,11 @@ export function Navbar() {
   );
 }
 
-const NavMenu = () => {
+const NavMenu = async () => {
+  const {
+    data: { user },
+  } = await createClient().auth.getUser();
+
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -35,13 +40,15 @@ const NavMenu = () => {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/admin" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Admin
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        {user && (
+          <NavigationMenuItem>
+            <Link href="/admin" legacyBehavior passHref>
+              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                Admin
+              </NavigationMenuLink>
+            </Link>
+          </NavigationMenuItem>
+        )}
         <NavigationMenuItem>
           <Link href="/profile" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>

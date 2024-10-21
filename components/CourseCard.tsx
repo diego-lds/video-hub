@@ -14,11 +14,11 @@ const CourseCard: React.FC<CourseCardProps> = ({
   return (
     <div className="bg-white h-96 p-6 rounded-md shadow-lg hover:shadow-xl transition-shadow duration-200">
       <Image
-        width={362}
-        height={192}
+        width={300}
+        height={200}
         src={imagePath || "/placeholder.png"}
         alt={title}
-        className=" object-cover h-48 w-96  relative"
+        className=" object-cover h-auto w-auto  relative"
       />
 
       <div className="mt-3">
