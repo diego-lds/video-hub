@@ -19,7 +19,7 @@ export default async function Index() {
           <div className="flex items-center">
             <div className="">
               <Image
-                width={350}
+                width={474}
                 height={125}
                 className="mb-5"
                 src="/logo.png"
@@ -34,7 +34,7 @@ export default async function Index() {
                 complicações técnicas.
               </p>
             </div>
-            <Image src="/hero.svg" alt="Hero" width={350} height={350} />
+            <Image src="/hero.png" alt="Hero" width={327} height={336} />
           </div>
         </main>
 

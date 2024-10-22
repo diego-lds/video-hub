@@ -18,10 +18,9 @@ const Card: React.FC<Card> = ({ title, description, imagePath }) => {
         <Image
           src={imagePath || "/placeholder.png"}
           alt={title}
-          sizes="16rem"
-          layout="fill"
-          objectFit="cover"
-          className="absolute object-cover h-64 inset-0"
+          width={382}
+          height={241}
+          className=" object-cover w-full h-full"
         />
       </div>
       <CardHeader className="p-4">

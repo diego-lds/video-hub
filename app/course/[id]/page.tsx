@@ -14,24 +14,18 @@ const Course = async ({ params }: { params: { id: string } }) => {
   const { data: lessons } = await getCourseLessonsAction(id);
 
   return (
-    <div className="w-full flex items-center ">
-      <div className="flex flex-col gap-10 ">
-        <h1 className="text-3xl font-extrabold lg:text-4xl !leading-tight max-w-xl">
-          {course?.title}
-        </h1>
-
-        <section className="">
-          {lessons && <VideoPlayer lessons={lessons} />}
-        </section>
-
+    <div className="w-full flex items-center  ">
+      <div className="w-full flex flex-col  gap-10 max-w-3xl ">
+        <h2 className=" font-extrabold  !leading-tight">{course?.title}</h2>
         {topics && (
-          <section className="mt-6">
-            <h2 className="text-2xl font-bold">Tópicos do Curso</h2>
-            <ul className="space-y-2">
-              {topics && <TopicGrid topics={topics} />}
-            </ul>
+          <section className="mt-3">
+            <ul className="">{topics && <TopicGrid topics={topics} />}</ul>
           </section>
         )}
+
+        <section className="flex flex-col gap-4">
+          {lessons && <VideoPlayer lessons={lessons} />}
+        </section>
       </div>
     </div>
   );
