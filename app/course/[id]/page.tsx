@@ -1,17 +1,17 @@
 import {
-  getCourseLessonsAction,
   getCoursesDetailsAction,
   getCourseTopicsAction,
 } from "@/app/actions/courses";
 import TopicGrid from "@/components/TopicGrid";
 import VideoPlayer from "@/components/VideoPlayer";
+import { getLessonsAction } from "@/app/actions/lessons";
 
 const Course = async ({ params }: { params: { id: string } }) => {
   const id = params?.id.toString();
 
   const { data: course, error } = await getCoursesDetailsAction(id);
   const { data: topics } = await getCourseTopicsAction(id);
-  const { data: lessons } = await getCourseLessonsAction(id);
+  const { data: lessons } = await getLessonsAction(id);
 
   return (
     <div className="w-full flex items-center  ">

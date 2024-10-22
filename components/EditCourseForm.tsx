@@ -9,14 +9,11 @@ import {
   updateCourseDetails,
 } from "@/app/actions/courses";
 import CourseInfo from "./CourseInfo";
-import ImageUploader from "./ImageUploader";
 import { Lesson } from "@/types";
 import Separator from "./Separator";
 import Button from "./Button";
 import Link from "next/link";
-import InputFile from "./FileInput";
 import FileInput from "./FileInput";
-import { revalidatePath } from "next/cache";
 
 interface Topic {
   id: number;
