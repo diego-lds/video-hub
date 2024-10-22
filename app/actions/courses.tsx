@@ -7,7 +7,6 @@ export const getCoursesAction = async () => {
   const supabase = createClient();
 
   const { data, error } = await supabase.from("courses").select("*");
-  console.log(error);
   if (error) {
     return { error };
   }
@@ -56,10 +55,10 @@ export const createCourse = async (formData: FormData) => {
   const newCourseId = courseData[0].id.toString();
 
   if (image) {
-    const { error: uploadError } = await supabase.storage
+    const { data: uploadImage, error: uploadError } = await supabase.storage
       .from("thumbnails")
       .upload(newCourseId, image, { upsert: true });
-
+    console.log({ uploadImage });
     if (uploadError) {
       await supabase.from("courses").delete().eq("id", newCourseId);
       return { error: uploadError };
@@ -67,12 +66,7 @@ export const createCourse = async (formData: FormData) => {
 
     const { data: publicUrlData } = supabase.storage
       .from("thumbnails")
-      .getPublicUrl(newCourseId, {
-        transform: {
-          width: 300,
-          height: 200,
-        },
-      });
+      .getPublicUrl(newCourseId, {});
 
     const { error: updateError } = await supabase
       .from("courses")
@@ -152,13 +146,9 @@ export const updateCourseDetails = async (formData: FormData) => {
   }
 
   if (image) {
-    const { data: uploadImage, error: uploadError } = await supabase.storage
+    const { data: storage } = await supabase.storage
       .from("thumbnails")
       .upload(`${id}`, image, { upsert: true });
-
-    if (uploadError) {
-      return { error: uploadError };
-    }
 
     // Obter a URL pública após o upload
     const { data: publicUrlData } = supabase.storage
@@ -172,6 +162,8 @@ export const updateCourseDetails = async (formData: FormData) => {
       .eq("id", id);
 
     revalidatePath("/admin");
+    revalidatePath("/");
+
     if (updateError) {
       return { error: updateError };
     }
@@ -219,7 +211,6 @@ export const getLessonVideoUrl = async (lessonId: string) => {
   if (error) {
     return { error };
   }
-  console.log(data);
   return { data };
 };
 
@@ -228,8 +219,6 @@ export const addNewTopic = async (formData: FormData) => {
 
   const topic = formData.get("topic") as string;
   const course_id = formData.get("course_id") as string;
-
-  console.log({ topic });
 
   const { data, error } = await supabase
     .from("learning_topics")
@@ -248,8 +237,6 @@ export const uploadVideo = async (formData: FormData) => {
 
   const topic = formData.get("topic") as string;
   const course_id = formData.get("course_id") as string;
-
-  console.log({ topic });
 
   const { data, error } = await supabase
     .from("learning_topics")

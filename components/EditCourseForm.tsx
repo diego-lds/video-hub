@@ -66,7 +66,6 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
     } else {
       setTopics([...topics, data[0]]);
       setNewTopic("");
-      console.log("Tópico adicionado com sucesso!");
     }
   };
 
@@ -125,7 +124,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
 
         <div className="mt-2">
           <label>Atualizar foto de capa</label>
-          <FileInput onChange={handleImageChange} />
+          <FileInput onChange={setNewImage} />
         </div>
 
         <div className="mt-5">

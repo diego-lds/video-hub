@@ -20,16 +20,15 @@ const useFileUpload = (): UseFileUploadResult => {
 
   const uploadFile = async (
     bucketName: string,
-    fileName: string,
+    lessonId: string,
     file: File
   ): Promise<string> => {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    console.log(session);
     return new Promise((resolve, reject) => {
       const upload = new tus.Upload(file, {
-        endpoint: process.env.NEXT_PUBLIC_SUPABASE_RESUMABLE_ENDPOINT,
+        endpoint: "http://127.0.0.1:54321/storage/v1/upload/resumable",
         retryDelays: [0, 3000, 5000, 10000, 20000],
         headers: {
           authorization: `Bearer ${session?.access_token}`,
@@ -37,9 +36,10 @@ const useFileUpload = (): UseFileUploadResult => {
         },
         uploadDataDuringCreation: true,
         removeFingerprintOnSuccess: true,
+
         metadata: {
-          bucketName: bucketName,
-          objectName: fileName,
+          bucketName: "public-videos",
+          objectName: lessonId,
           contentType: file.type,
           cacheControl: "3600",
         },
@@ -53,10 +53,19 @@ const useFileUpload = (): UseFileUploadResult => {
           const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
           setProgress(+percentage); // Atualiza o estado de progresso
         },
-        onSuccess: function () {
-          console.log("Upload com sucesso! URL do arquivo:", upload.url);
-          setUploading(false); // Reseta o estado de uploading
-          resolve(upload.url as string); // Retorna a URL do arquivo
+        onSuccess: async function () {
+          const { data } = createClient()
+            .storage.from("public-videos")
+            .getPublicUrl(lessonId);
+
+          await supabase
+            .from("lessons")
+            .update({
+              video_url: data.publicUrl,
+            })
+            .eq("id", lessonId);
+
+          resolve(data.publicUrl as string); // Retorna a URL do arquivo
         },
       });
 

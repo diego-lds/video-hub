@@ -12,7 +12,7 @@ const Course = async ({ params }: { params: { id: string } }) => {
   const { data: course, error } = await getCoursesDetailsAction(id);
   const { data: topics } = await getCourseTopicsAction(id);
   const { data: lessons } = await getCourseLessonsAction(id);
-  console.log(courses, error);
+
   return (
     <div className="w-full flex items-center ">
       <div className="flex flex-col gap-10 ">

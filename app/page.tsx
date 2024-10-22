@@ -1,10 +1,16 @@
 import Image from "next/image";
-import Card from "@/components/Card";
 import Separator from "@/components/Separator";
 import { getCoursesAction } from "./actions/courses";
-import CourseCard from "@/components/CourseCard";
+import Card from "@/components/Card";
+import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
 
 export default async function Index() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { data: courses } = await getCoursesAction();
   console.log(courses);
   return (
@@ -31,14 +37,17 @@ export default async function Index() {
           <section>
             <h1>Todos os cursos</h1>
             <Separator />
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+            <ul className="grid grid-cols-3 gap-4 mt-12">
               {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  imagePath={course.image_url}
-                  title={course.title}
-                  description={course.description}
-                />
+                <li key={course.id}>
+                  <Link href={`/course/${course.id}`}>
+                    <Card
+                      imagePath={course.image_url}
+                      title={course.title}
+                      description={course.description}
+                    />
+                  </Link>
+                </li>
               ))}
             </ul>
           </section>

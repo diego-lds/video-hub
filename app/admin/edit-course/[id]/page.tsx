@@ -15,8 +15,6 @@ export default async function EditCourse({
   const { data: lessons } = await getCourseLessonsAction(params?.id);
   const { data: topics } = await getCourseTopicsAction(params?.id);
 
-  console.log(lessons);
-
   return (
     <div className=" ">
       {course && lessons && topics ? (

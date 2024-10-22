@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createNewLesson } from "@/app/actions/courses";
+import { createNewLesson } from "@/app/actions/lessons";
 import Button from "./Button";
 import useFileUpload from "@/app/hooks/useFileUpload";
 import InputVideo from "./FileInput";
 import { Progress } from "./ui/progress";
+import { createClient } from "@/utils/supabase/client";
 export default function NewLessonForm({ courseId }: { courseId: string }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -24,7 +25,7 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log(file);
     if (!file) return;
 
     if (file.size >= 50 * 1024 * 1024) {
@@ -41,23 +42,22 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
     const { data, error } = await createNewLesson(formData);
 
-    setLoading(false);
-
     if (error) {
-      console.log("Erro ao criar a aula", error);
-    } else {
-      const lessonId = data.id;
-      const path = `lessons/${lessonId}/${file.name}`;
-      await uploadFile(bucketName, path, file)
-        .then((url) => {
-          console.log("Arquivo enviado com sucesso:", url);
-        })
-        .catch((error) => {
-          console.error("Erro ao enviar o arquivo:", error);
-        });
-      alert("Aula criada com sucesso");
-      router.push("/admin/edit-course/" + courseId);
+      return { error };
     }
+
+    const lessonId = data[0].id;
+
+    await uploadFile(bucketName, lessonId, file)
+      .then((url) => {
+        setLoading(false);
+
+        router.push(`/admin/edit-course/${courseId}`);
+        alert("Aula criada com sucesso! " + lessonId);
+      })
+      .catch((error) => {
+        console.error("Erro ao enviar o arquivo:", error);
+      });
   };
 
   return (
@@ -97,15 +97,19 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
           />
         </div>
 
-        <InputVideo onVideoChange={handleFileChange} />
+        <InputVideo handleOnChange={handleFileChange} />
 
         <Button type="submit" disabled={loading}>
           {loading ? "Criando aula..." : "Criar aula"}
         </Button>
 
-        {progress > 0 && <p>Subindo video para o servidor</p>}
-
-        <Progress value={progress} />
+        {uploading && <p>Subindo video para o servidor</p>}
+        {progress > 0 && (
+          <div>
+            <p>{progress}%</p>
+            <Progress value={progress} />
+          </div>
+        )}
       </form>
     </div>
   );

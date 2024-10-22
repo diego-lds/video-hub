@@ -30,6 +30,7 @@ const NavMenu = async () => {
     data: { user },
   } = await createClient().auth.getUser();
 
+  if (!user) return;
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -40,15 +41,15 @@ const NavMenu = async () => {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        {user && (
-          <NavigationMenuItem>
-            <Link href="/admin" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Admin
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-        )}
+
+        <NavigationMenuItem>
+          <Link href="/admin" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Admin
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
         <NavigationMenuItem>
           <Link href="/profile" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
