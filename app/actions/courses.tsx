@@ -161,9 +161,6 @@ export const updateCourseDetails = async (formData: FormData) => {
       .update({ image_url: publicUrlData.publicUrl })
       .eq("id", id);
 
-    revalidatePath("/admin");
-    revalidatePath("/");
-
     if (updateError) {
       return { error: updateError };
     }

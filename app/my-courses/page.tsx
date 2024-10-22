@@ -5,15 +5,18 @@ import { getMyCoursesAction } from "../actions/courses";
 import Separator from "@/components/Separator";
 import Button from "@/components/Button";
 
-export default async function Admin() {
+export default async function MyCoursesPage() {
   const { data: courses } = await getMyCoursesAction();
   console.log(courses);
   return (
     <div className="flex flex-col">
-      <h1>Meus cursos | edição</h1>
-      <ul className="my-12">
+      <h1>Meus cursos | criar | edição</h1>
+      <Button variant={"outline"}>
+        <Link href="/my-courses/new-course">Cria novo curso</Link>
+      </Button>
+      <ul className="mt-5">
         {courses?.map((course) => (
-          <Link key={course.id} href={`/admin/edit-course/${course.id}`}>
+          <Link key={course.id} href={`/my-courses/edit-course/${course.id}`}>
             <li className="flex p-4 hover:bg-slate-200 transition duration-300 ease-in-out">
               <div className="min-w-64 min-h-36">
                 <Image
@@ -26,7 +29,6 @@ export default async function Admin() {
               </div>
               <div className="flex flex-col justify-between px-4">
                 <h4 className="underline">{course.title}</h4>
-                <span>{course.image_url}</span>
                 <p>{course.description}</p>
                 <span>Criado em: {formatDateString(course.created_at)}</span>
               </div>
@@ -35,9 +37,6 @@ export default async function Admin() {
           </Link>
         ))}
       </ul>
-      <Button>
-        <Link href="/admin/new-course">Novo Curso</Link>
-      </Button>
     </div>
   );
 }

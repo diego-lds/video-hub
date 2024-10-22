@@ -52,7 +52,7 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
       .then((url) => {
         setLoading(false);
 
-        router.push(`/admin/edit-course/${courseId}`);
+        router.push(`/my-courses/edit-course/${courseId}`);
         alert("Aula criada com sucesso! " + lessonId);
       })
       .catch((error) => {

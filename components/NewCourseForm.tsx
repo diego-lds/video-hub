@@ -34,7 +34,7 @@ export default function NewCourseForm() {
       alert("Failed to create course.");
     } else {
       alert("Course created successfully!");
-      router.push("/admin");
+      router.push("/my-courses");
     }
   };
 

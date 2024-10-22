@@ -106,7 +106,7 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
     } else {
       alert("Curso atualizado com sucesso!");
 
-      router.push("/admin");
+      router.push("/my-courses");
     }
   };
 
@@ -184,7 +184,9 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
       }
       <Separator />
       <Button size="lg" onClick={handleAddTopic}>
-        <Link href={`/admin/new-lesson/${course.id}`}>Criar nova aula</Link>
+        <Link href={`/my-courses/new-lesson/${course.id}`}>
+          Criar nova aula
+        </Link>
       </Button>
     </div>
   );

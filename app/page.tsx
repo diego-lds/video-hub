@@ -18,9 +18,15 @@ export default async function Index() {
       <div className=" ">
         <main className="flex flex-col lg:flex-row">
           <div className="flex items-center">
-            <div>
-              <Image width={474} height={125} src="/logo.png" alt="Logo" />
-              <h3>Crie e disponibilize seus cursos online com facilidade!</h3>
+            <div className="">
+              <Image
+                width={350}
+                height={125}
+                className="mb-5"
+                src="/logo.png"
+                alt="Logo"
+              />
+              <h4>Crie e disponibilize seus cursos online com facilidade!</h4>
               <p>
                 Transforme seu conhecimento em uma fonte de renda,
                 compartilhando suas habilidades com o mundo. Nossa plataforma
@@ -29,7 +35,7 @@ export default async function Index() {
                 complicações técnicas.
               </p>
             </div>
-            <Image src="/hero.svg" alt="Hero" width={500} height={500} />
+            <Image src="/hero.svg" alt="Hero" width={350} height={350} />
           </div>
         </main>
 

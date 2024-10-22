@@ -43,7 +43,7 @@ const NavMenu = async () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <Link href="/admin" legacyBehavior passHref>
+          <Link href="/my-courses" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               Admin
             </NavigationMenuLink>

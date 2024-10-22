@@ -11,7 +11,7 @@ export default function AddTopic({ topic: string }) {
         action={async (formData: FormData) => {
           `use server`;
           await addNewTopic(courseId, formData);
-          revalidatePath(`/admin/edit-course/${courseId}`);
+          revalidatePath(`/my-courses/edit-course/${courseId}`);
         }}
       >
         <input type="text" name="topic" />

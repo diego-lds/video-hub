@@ -19,7 +19,7 @@ const LessonsList: React.FC<LessonsListProps> = ({ lessons, courseId }) => {
               key={lesson.id}
               className="flex justify-between py-3 border-b border-gray-200 last:border-b-0"
             >
-              <Link href={`/admin/lesson-details/${lesson.id}`}>
+              <Link href={`/my-courses/lesson-details/${lesson.id}`}>
                 {lesson.title}
               </Link>
               <Button
@@ -35,7 +35,7 @@ const LessonsList: React.FC<LessonsListProps> = ({ lessons, courseId }) => {
         <p>Nenhuma aula cadastrada</p>
       )}
       <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition mt-5">
-        <Link href={`/admin/new-lesson/${courseId}`}>Criar nova aula</Link>
+        <Link href={`/my-courses/new-lesson/${courseId}`}>Criar nova aula</Link>
       </button>
     </div>
   );
