@@ -80,12 +80,6 @@ const EditCourseForm: React.FC<CourseDetailsProps> = ({
     }
   };
 
-  const handleImageChange = (file: File | null) => {
-    if (file) {
-      setNewImage(file);
-    }
-  };
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 

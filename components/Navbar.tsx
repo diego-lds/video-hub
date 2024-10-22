@@ -15,7 +15,7 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function Navbar() {
   return (
-    <nav className="h-16 flex items-center justify-between border-b px-16">
+    <nav className="h-16 flex items-center justify-between border-b px-16  ">
       <div className="flex gap-10">
         <Image src="/logo_black.png" alt="logo" width={150} height={40} />
         <NavMenu />
@@ -32,12 +32,12 @@ const NavMenu = async () => {
 
   if (!user) return;
   return (
-    <NavigationMenu>
+    <NavigationMenu className="text-sm sm:flex-col">
       <NavigationMenuList>
         <NavigationMenuItem>
           <Link href="/" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Home
+              Início
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -45,7 +45,7 @@ const NavMenu = async () => {
         <NavigationMenuItem>
           <Link href="/my-courses" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Admin
+              Meus Cursos
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -60,7 +60,7 @@ const NavMenu = async () => {
         <NavigationMenuItem>
           <Link href="/video-compressor" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Compressor de Video
+              Compressão de Vídeo
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

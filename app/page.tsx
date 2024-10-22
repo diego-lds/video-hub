@@ -12,7 +12,6 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   const { data: courses } = await getCoursesAction();
-  console.log(courses);
   return (
     <>
       <div className=" ">

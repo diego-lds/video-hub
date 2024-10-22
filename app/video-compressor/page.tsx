@@ -1,12 +1,11 @@
 "use client";
 import Compressor from "@/components/Compressor";
-import VideoUpload from "@/components/FileUpload";
 
 const VideoCompressor = () => {
   return (
     <div className="">
-      <h1>Compressor de video</h1>
-      <p className="text-2xl">
+      <h1>Compressor de Vídeo</h1>
+      <p className="text-lg">
         Ferramenta de descompressão de vídeo permite otimizar o tamanho dos seus
         arquivos de vídeo sem comprometer a qualidade.
       </p>

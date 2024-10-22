@@ -7,7 +7,6 @@ import Button from "@/components/Button";
 
 export default async function MyCoursesPage() {
   const { data: courses } = await getMyCoursesAction();
-  console.log(courses);
   return (
     <div className="flex flex-col">
       <h1>Meus cursos | criar | edição</h1>
