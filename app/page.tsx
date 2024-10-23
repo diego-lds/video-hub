@@ -12,13 +12,15 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   const { data: courses } = await getCoursesAction();
+
   return (
     <>
-      <div className=" ">
+      <div className=" animate-fade">
         <main className="flex flex-col lg:flex-row">
           <div className="flex items-center">
             <div className="">
               <Image
+                priority={true}
                 width={474}
                 height={125}
                 className="mb-5"
@@ -34,7 +36,13 @@ export default async function Index() {
                 complicações técnicas.
               </p>
             </div>
-            <Image src="/hero.png" alt="Hero" width={327} height={336} />
+            <Image
+              priority={true}
+              src="/hero.png"
+              alt="Hero"
+              width={327}
+              height={336}
+            />
           </div>
         </main>
 

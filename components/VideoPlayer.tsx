@@ -3,7 +3,7 @@
 import { VideoIcon, PlayIcon, BookOpenCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
-
+import NoSSR from "@/components/NoSSR";
 interface Lesson {
   id: number;
   title: string;

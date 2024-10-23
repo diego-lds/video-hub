@@ -17,7 +17,13 @@ export async function Navbar() {
   return (
     <nav className="h-16 flex items-center justify-between border-b px-16  ">
       <div className="flex gap-10">
-        <Image src="/logo_black.png" alt="logo" width={150} height={40} />
+        <Image
+          src="/logo_black.png"
+          priority={true}
+          alt="logo"
+          width={150}
+          height={40}
+        />
         <NavMenu />
       </div>
       <AuthButton />

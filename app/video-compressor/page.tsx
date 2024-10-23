@@ -1,6 +1,6 @@
 "use client";
 import Compressor from "@/components/Compressor";
-
+import NoSSR from "@/components/NoSSR";
 const VideoCompressor = () => {
   return (
     <div className="">
@@ -11,7 +11,9 @@ const VideoCompressor = () => {
       </p>
 
       <div className="p-8 mt-8 bg-white rounded-lg shadow-md">
-        <Compressor />
+        <NoSSR>
+          <Compressor />
+        </NoSSR>
       </div>
     </div>
   );

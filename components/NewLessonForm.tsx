@@ -19,10 +19,6 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
   const bucketName = "public-videos";
 
-  const handleFileChange = (file: File | null) => {
-    setFile(file);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(file);
@@ -97,7 +93,7 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
           />
         </div>
 
-        <InputVideo handleOnChange={handleFileChange} />
+        <InputVideo onChange={setFile} />
 
         <Button type="submit" disabled={loading}>
           {loading ? "Criando aula..." : "Criar aula"}

@@ -105,9 +105,20 @@
 }
 
 .custom-height {
-  height: calc(
-    100vh - 200px
-  ); /* Substitua 100px pela altura do seu cabeçalho ou footer */
+  height: calc(100vh - 200px);
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-fade {
+  animation: fade 1s forwards;
 }
 
 @layer base {
