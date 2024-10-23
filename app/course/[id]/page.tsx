@@ -1,17 +1,15 @@
-import {
-  getCoursesDetailsAction,
-  getCourseTopicsAction,
-} from "@/app/actions/courses";
+import { getCourseAction } from "@/app/actions/courses";
+import { getLessonsAction } from "@/app/actions/lessons";
+import { getCourseTopicsAction } from "@/app/actions/topics";
 import TopicGrid from "@/components/TopicGrid";
 import VideoPlayer from "@/components/VideoPlayer";
-import { getLessonsAction } from "@/app/actions/lessons";
 
 const Course = async ({ params }: { params: { id: string } }) => {
   const id = params?.id.toString();
 
-  const { data: course, error } = await getCoursesDetailsAction(id);
-  const { data: topics } = await getCourseTopicsAction(id);
-  const { data: lessons } = await getLessonsAction(id);
+  const { data: course, error: courseError } = await getCourseAction(id);
+  const { data: topics, error: topicsError } = await getCourseTopicsAction(id);
+  const { data: lessons, error: lessonsError } = await getLessonsAction(id);
 
   return (
     <div className="w-full flex items-center  ">

@@ -1,25 +1,15 @@
 "use client";
-
+import { FC } from "react";
 import { useRouter } from "next/navigation";
-
 import { useState } from "react";
-import {
-  addNewTopic,
-  deleteTopic,
-  updateCourseDetails,
-} from "@/app/actions/courses";
+import { updateCourseDetails } from "@/app/actions/courses";
+import { addNewTopic, deleteTopic } from "@/app/actions/topics";
+import { Course, Lesson, Topic } from "@/types";
 import CourseInfo from "./CourseInfo";
-import { Lesson } from "@/types";
 import Separator from "./Separator";
 import Button from "./Button";
 import Link from "next/link";
 import FileInput from "./FileInput";
-
-interface Topic {
-  id: number;
-  course_id: string;
-  topic: string;
-}
 
 interface CourseDetailsProps {
   course: Course;
@@ -27,14 +17,7 @@ interface CourseDetailsProps {
   topics: any[];
 }
 
-interface Course {
-  id: number;
-  title: string;
-  description: string;
-  image_url: string;
-}
-
-const EditCourseForm: React.FC<CourseDetailsProps> = ({
+const EditCourseForm: FC<CourseDetailsProps> = ({
   course,
   lessons: courseLessons,
   topics: courseTopics,

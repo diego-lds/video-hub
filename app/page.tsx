@@ -2,20 +2,18 @@ import Image from "next/image";
 import Separator from "@/components/Separator";
 import { getCoursesAction } from "./actions/courses";
 import Card from "@/components/Card";
-import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
 export default async function Index() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: courses, error: errorCourses } = await getCoursesAction();
 
-  const { data: courses } = await getCoursesAction();
+  if (errorCourses) {
+    console.error(errorCourses?.message);
+  }
 
   return (
     <>
-      <div className=" animate-fade">
+      <div className="animate-fade">
         <main className="flex flex-col lg:flex-row">
           <div className="flex items-center">
             <div className="">

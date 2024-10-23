@@ -1,20 +1,12 @@
 import NewLessonForm from "@/components/NewLessonForm";
-import { createClient } from "@/utils/supabase/server";
+import { Params } from "@/types";
 
-const NewLesson = async ({ params }: { params: { id: string } }) => {
-  const id = params?.id.toString();
-
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const NewLesson = async ({ params }: Params) => {
+  const id = params?.id;
 
   return (
-    <div className="">
-      <div className=" ">
-        <NewLessonForm courseId={id} />
-      </div>
+    <div>
+      <NewLessonForm courseId={id} />
     </div>
   );
 };

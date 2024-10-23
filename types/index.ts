@@ -11,18 +11,22 @@ export interface Lesson {
 }
 
 export interface Topic {
-  id?: string;
+  id: number;
   course_id: string;
   topic: string;
 }
 
-export interface CourseDetails {
+export interface Params {
+  params: {
+    id: string;
+  };
+}
+
+export interface Course {
   id: number;
   title: string;
   description: string;
-  image_path: string;
-  lessons: Lesson[];
-  learning_topics: Topic[];
+  image_url: string;
 }
 
 export interface CourseInfoFormProps {
@@ -50,9 +54,7 @@ export interface LessonsListProps {
   courseId: number;
 }
 
-export interface EditCourseFormProps {
-  courseDetails: CourseDetails;
-}
+
 
 export interface AddTopicResult {
   data: Topic[] | null;

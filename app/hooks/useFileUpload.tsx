@@ -28,7 +28,7 @@ const useFileUpload = (): UseFileUploadResult => {
     } = await supabase.auth.getSession();
     return new Promise((resolve, reject) => {
       const upload = new tus.Upload(file, {
-        endpoint: "http://127.0.0.1:54321/storage/v1/upload/resumable",
+        endpoint: process.env.NEXT_PUBLIC_SUPABASE_RESUMABLE_ENDPOINT,
         retryDelays: [0, 3000, 5000, 10000, 20000],
         headers: {
           authorization: `Bearer ${session?.access_token}`,
