@@ -12,7 +12,7 @@ export async function Navbar() {
   } = await supabase.auth.getUser();
   return (
     <header>
-      <nav className="h-16 border-b flex items-center justify-between px-4 sm:px-16">
+      <nav className="h-16 border-b  flex items-center justify-between px-4 sm:px-16">
         <Image
           src="/logo_black.png"
           priority={true}

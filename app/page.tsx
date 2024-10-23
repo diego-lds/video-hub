@@ -16,7 +16,7 @@ export default async function Index() {
       <div className="animate-fade">
         <main className="flex flex-col lg:flex-row">
           <div className="flex flex-col sm:flex-row justify-center">
-            <div className="py-4">
+            <div className="py-8">
               <Image
                 priority
                 width={474}
@@ -25,8 +25,8 @@ export default async function Index() {
                 src="/logo.png"
                 alt="Logo"
               />
-              <h4>Crie e disponibilize seus cursos online com facilidade!</h4>
-              <p className="text-md">
+              <h3>Crie e disponibilize seus cursos online com facilidade!</h3>
+              <p className="text-lg">
                 Transforme seu conhecimento em uma fonte de renda,
                 compartilhando suas habilidades com o mundo. Nossa plataforma
                 oferece todas as ferramentas necessárias para que você possa
@@ -37,7 +37,7 @@ export default async function Index() {
             <div className="sm:min-w-[500px]">
               <Image
                 priority
-                src="/hero.png"
+                src="/hero.svg"
                 alt="Hero"
                 width={500}
                 height={500}
