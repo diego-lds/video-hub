@@ -1,102 +1,59 @@
 import * as React from "react";
-import Link from "next/link";
-
-import { cn } from "@/lib/utils";
 import Image from "next/image";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
+import Link from "next/link";
 import AuthButton from "./AuthButton";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/client";
 
 export async function Navbar() {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
-    <nav className="h-16 flex items-center justify-between border-b px-16  ">
-      <div className="flex gap-10">
+    <header>
+      <nav className="h-16 border-b flex items-center justify-between px-4 sm:px-16">
         <Image
           src="/logo_black.png"
           priority={true}
           alt="logo"
-          width={150}
+          width={100}
           height={40}
         />
-        <NavMenu />
+        <div className="hidden gap-10 sm:flex sm:items-center">
+          {user && <NavMenu />}
+        </div>
+        <AuthButton />
+      </nav>
+
+      <div className="max-h-screen px-6 py-4 overflow-hidden sm:hidden sm:text-sm">
+        {user && <NavMenu />}
       </div>
-      <AuthButton />
-    </nav>
+    </header>
   );
 }
 
-const NavMenu = async () => {
-  const {
-    data: { user },
-  } = await createClient().auth.getUser();
+function NavMenu() {
+  const menuItems = [
+    { href: "/", label: "Início" },
+    { href: "/my-courses", label: "Meus Cursos" },
+    { href: "/profile", label: "Perfil" },
+    { href: "/video-compressor", label: "Ferramentas" },
+  ];
 
-  if (!user) return;
   return (
-    <NavigationMenu className="text-sm sm:flex-col">
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <Link href="/" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Início
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <Link href="/my-courses" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Meus Cursos
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <Link href="/profile" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Meu perfil
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/video-compressor" legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Compressão de Vídeo
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-  );
-};
-
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
+    <ul className="flex flex-col sm:flex-row sm:gap-4">
+      {menuItems.map((item) => (
+        <li
+          key={item.href}
+          className="flex border-b item-center py-2 text-sm sm:border-b-0"
         >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
+          <Link href={item.href}>
+            <span>{item.label}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
-});
-ListItem.displayName = "ListItem";
+}
