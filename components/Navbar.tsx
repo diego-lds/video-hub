@@ -2,7 +2,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AuthButton from "./AuthButton";
-import { createClient } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/server";
 
 export async function Navbar() {
   const supabase = createClient();
@@ -10,7 +10,6 @@ export async function Navbar() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   return (
     <header>
       <nav className="h-16 border-b flex items-center justify-between px-4 sm:px-16">
@@ -21,15 +20,19 @@ export async function Navbar() {
           width={100}
           height={40}
         />
-        <div className="hidden gap-10 sm:flex sm:items-center">
-          {user && <NavMenu />}
-        </div>
+        {user && (
+          <div className="hidden gap-10 sm:flex sm:items-center">
+            <NavMenu />
+          </div>
+        )}
         <AuthButton />
       </nav>
 
-      <div className="max-h-screen px-6 py-4 overflow-hidden sm:hidden sm:text-sm">
-        {user && <NavMenu />}
-      </div>
+      {user && (
+        <div className="max-h-screen px-6 py-4 overflow-hidden sm:hidden sm:text-sm">
+          <NavMenu />
+        </div>
+      )}
     </header>
   );
 }
