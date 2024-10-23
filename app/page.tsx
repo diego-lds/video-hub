@@ -15,10 +15,10 @@ export default async function Index() {
     <>
       <div className="animate-fade">
         <main className="flex flex-col lg:flex-row">
-          <div className="flex items-center">
-            <div className="">
+          <div className="flex flex-col sm:flex-row justify-center">
+            <div className="py-4">
               <Image
-                priority={true}
+                priority
                 width={474}
                 height={125}
                 className="mb-5"
@@ -26,7 +26,7 @@ export default async function Index() {
                 alt="Logo"
               />
               <h4>Crie e disponibilize seus cursos online com facilidade!</h4>
-              <p>
+              <p className="text-md">
                 Transforme seu conhecimento em uma fonte de renda,
                 compartilhando suas habilidades com o mundo. Nossa plataforma
                 oferece todas as ferramentas necessárias para que você possa
@@ -34,21 +34,23 @@ export default async function Index() {
                 complicações técnicas.
               </p>
             </div>
-            <Image
-              priority={true}
-              src="/hero.png"
-              alt="Hero"
-              width={327}
-              height={336}
-            />
+            <div className="sm:min-w-[500px]">
+              <Image
+                priority
+                src="/hero.png"
+                alt="Hero"
+                width={500}
+                height={500}
+              />
+            </div>
           </div>
         </main>
 
         {courses && (
-          <section>
-            <h1>Todos os cursos</h1>
+          <section className="mt-8">
+            <h2>Todos os cursos</h2>
             <Separator />
-            <ul className="grid grid-cols-3 gap-4 mt-12">
+            <ul className="grid sm:grid-cols-3 gap-4 mt-12">
               {courses.map((course) => (
                 <li key={course.id}>
                   <Link href={`/course/${course.id}`}>
