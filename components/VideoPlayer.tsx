@@ -4,6 +4,7 @@ import { VideoIcon, PlayIcon, BookOpenCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactPlayer from "react-player/lazy";
 import NoSSR from "@/components/NoSSR";
+
 interface Lesson {
   id: number;
   title: string;
@@ -25,23 +26,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
   }, []);
 
   if (!isClient) {
-    return null; //
+    return null;
   }
+
   const handleClick = (lesson: Lesson) => {
     setCurrentLesson(lesson);
   };
 
   return (
-    <main className="flex flex-col mt-4 p-4 bg-white rounded-lg shadow-lg">
+    <main className="flex flex-col mt-4  bg-white rounded-lg shadow-lg max-w-full">
       {currentLesson && (
-        <h1 className="text-3xl font-bold mb-2">{currentLesson.title}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+          {currentLesson.title}
+        </h1>
       )}
       {currentLesson && (
-        <h2 className="text-md text-gray-600 mb-4">
+        <p className="text-md text-gray-600 mb-4">
           {currentLesson.description}
-        </h2>
+        </p>
       )}
-      <div className="w-full h-96 aspect-video border border-gray-300 rounded-lg overflow-hidden mb-5">
+      <div className="w-full aspect-auto sm:aspect-video border border-gray-300 rounded-lg overflow-hidden mb-5">
         {currentLesson ? (
           <ReactPlayer
             url={currentLesson.video_url}
@@ -51,7 +55,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
             width="100%"
           />
         ) : (
-          <div className="flex flex-1 aspect-video items-center justify-center">
+          <div className="flex items-center justify-center aspect-video">
             <p className="text-3xl font-bold">Carregando...</p>
           </div>
         )}
@@ -60,7 +64,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ lessons }) => {
         <BookOpenCheck />
         Aulas
       </h1>
-      <ul className="space-y-2">
+      <ul className="space-y-2 overflow-y-auto max-h-96">
         {lessons?.map((lesson, index) => (
           <li
             key={lesson.id}
