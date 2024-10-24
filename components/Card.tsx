@@ -14,7 +14,7 @@ interface Card {
 const Card: React.FC<Card> = ({ title, description, imagePath }) => {
   return (
     <CustomCard className="w-full max-w-sm mx-auto overflow-hidden rounded-lg shadow-md">
-      <div className="relative w-full aspect-[16/9]">
+      <div className="relative w-full aspect-auto sm:aspect-video ">
         <Image
           src={imagePath || "/placeholder.png"}
           alt={title}
