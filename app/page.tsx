@@ -50,7 +50,7 @@ export default async function Index() {
           <section className="mt-8">
             <h2>Todos os cursos</h2>
             <Separator />
-            <ul className="grid sm:grid-cols-3 gap-4 mt-12">
+            <ul className="grid p-1 sm:grid-cols-3 gap-4 mt-12">
               {courses.map((course) => (
                 <li key={course.id}>
                   <Link href={`/course/${course.id}`}>
