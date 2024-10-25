@@ -12,19 +12,22 @@ export async function Navbar() {
   } = await supabase.auth.getUser();
   return (
     <header>
-      <nav className="h-16 border-b  flex items-center justify-between px-4 sm:px-16">
-        <Image
-          src="/logo_black.png"
-          priority={true}
-          alt="logo"
-          width={100}
-          height={40}
-        />
-        {user && (
-          <div className="hidden gap-10 sm:flex sm:items-center">
-            <NavMenu />
-          </div>
-        )}
+      <nav className="h-20 border-b  flex items-center justify-between px-4 sm:px-16">
+        <div className="flex gap-24">
+          <Image
+            src="/logo.svg"
+            priority={true}
+            alt="logo"
+            width={96}
+            height={40}
+          />
+          {user && (
+            <div className="hidden gap-10 sm:flex sm:items-center">
+              <NavMenu />
+            </div>
+          )}
+        </div>
+
         <AuthButton />
       </nav>
 
@@ -50,7 +53,7 @@ function NavMenu() {
       {menuItems.map((item) => (
         <li
           key={item.href}
-          className="flex border-b item-center py-2 text-sm sm:border-b-0"
+          className="flex border-b item-center  py-2 text-sm sm:text-lg sm:border-b-0"
         >
           <Link href={item.href}>
             <span>{item.label}</span>

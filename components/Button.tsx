@@ -7,9 +7,11 @@ const Button: React.FC<ButtonProps> = ({
   variant = "default",
 }) => {
   return (
-    <Btn onClick={onClick} variant={variant}>
-      {children}
-    </Btn>
+    <div>
+      <Btn onClick={onClick} variant={variant}>
+        {children}
+      </Btn>
+    </div>
   );
 };
 
