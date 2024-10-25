@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
+import Image from "next/image";
 
 export default function Login({
   searchParams,
@@ -53,7 +54,18 @@ export default function Login({
   };
 
   return (
-    <div className="flex  items-center justify-center gap-4 p-4">
+    <div className="flex flex-col  items-center justify-center gap-4 p-4">
+      <div className="m-10">
+        <Image
+          src="/logo.svg"
+          priority={true}
+          alt="logo"
+          width={400}
+          height={400}
+        />
+      </div>
+      <h3 className="my-4">Compartilhe seu conhecimento com facilidade!</h3>
+
       <form className="rounded-md  p-4 flex flex-col gap-2">
         <label className="text-md" htmlFor="email">
           Email
