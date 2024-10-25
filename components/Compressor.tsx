@@ -84,16 +84,8 @@ export default function Compressor() {
     const newFile = new File([data.buffer], "newfile.mp4", {
       type: "video/mp4",
     });
-
-    console.table({
-      oldSize: formatBytes(file.size),
-      newSize: formatBytes(newFile.size),
-      args: args.join(","),
-      tempo: executionTime.toFixed(0),
-    });
   };
 
-  console.log(loaded, isLoading);
   return (
     <div className="flex flex-col place-items-center gap-4">
       <div className="w-full">

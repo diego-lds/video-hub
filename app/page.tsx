@@ -4,12 +4,13 @@ import { getCoursesAction } from "./actions/courses";
 import Card from "@/components/Card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { toast, Toaster } from "sonner";
 
 export default async function Index() {
   const { data: courses, error: errorCourses } = await getCoursesAction();
 
   if (errorCourses) {
-    console.error(errorCourses?.message);
+    toast.error(errorCourses?.message);
   }
 
   return (

@@ -12,6 +12,7 @@ import Link from "next/link";
 import FileInput from "./FileInput";
 import Image from "next/image";
 import { deleteLesson } from "@/app/actions/lessons";
+import { toast } from "sonner";
 
 interface CourseDetailsProps {
   course: Course;
@@ -44,7 +45,7 @@ const EditCourseForm: FC<CourseDetailsProps> = ({
     const { data, error } = await addNewTopic(formData);
 
     if (error) {
-      console.log(error);
+      toast(error.message);
     } else {
       setTopics([...topics, data[0]]);
       setNewTopic("");
@@ -55,10 +56,10 @@ const EditCourseForm: FC<CourseDetailsProps> = ({
     if (!topicId) return;
     const { error } = await deleteTopic(topicId.toString());
     if (error) {
-      console.log(error);
+      toast.error(error.message);
     } else {
       setTopics(topics.filter((t) => t.id !== topicId));
-      console.log("Tópico removido com sucesso!");
+      toast.success("Tópico removido com sucesso!");
     }
   };
 
@@ -66,10 +67,10 @@ const EditCourseForm: FC<CourseDetailsProps> = ({
     if (!lessonId) return;
     const { error } = await deleteLesson(lessonId.toString());
     if (error) {
-      console.log(error);
+      toast.error(error.message);
     } else {
       setLessons(lessons.filter((t) => t.id !== lessonId));
-      console.log("Aula removida com sucesso!");
+      toast.error("Aula removida com sucesso!");
     }
   };
 
@@ -89,9 +90,9 @@ const EditCourseForm: FC<CourseDetailsProps> = ({
     const { error } = await updateCourseDetails(formData);
 
     if (error) {
-      alert(error.message);
+      toast.error(error.message);
     } else {
-      alert("Curso atualizado com sucesso!");
+      toast.success("Curso atualizado com sucesso!");
 
       router.push("/my-courses");
     }
@@ -100,6 +101,7 @@ const EditCourseForm: FC<CourseDetailsProps> = ({
   return (
     <div className="p-2 space-y-6">
       <h1 className="mb-6">Editar Curso</h1>
+
       <form onSubmit={handleSubmit}>
         <CourseInfo
           title={title}

@@ -10,6 +10,7 @@ import "./globals.css";
 
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Toaster } from "sonner";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -33,7 +34,9 @@ export default function RootLayout({
         <main className="flex-grow mx-8 py-8 sm:mx-16 md:mx-24 lg:mx- xl:mx-64">
           {children}
         </main>
+
         <Footer />
+        <Toaster />
       </body>
     </html>
   );

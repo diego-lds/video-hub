@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import * as tus from "tus-js-client";
+import { toast } from "sonner";
 
 type UseFileUploadResult = {
   progress: number;
@@ -45,7 +46,7 @@ const useFileUpload = (): UseFileUploadResult => {
         },
         chunkSize: 6 * 1024 * 1024, // Tamanho do chunk (6MB)
         onError: function (error) {
-          console.error("Upload falhou:", error);
+          toast.error(error.message);
           setUploading(false);
           reject(error);
         },

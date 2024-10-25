@@ -57,7 +57,6 @@ export const createCourse = async (formData: FormData) => {
     const { data: uploadImage, error: uploadError } = await supabase.storage
       .from("thumbnails")
       .upload(newCourseId, image, { upsert: true });
-    console.log({ uploadImage });
     if (uploadError) {
       await supabase.from("courses").delete().eq("id", newCourseId);
       return { error: uploadError };

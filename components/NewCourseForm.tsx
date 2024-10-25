@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { createCourse } from "@/app/actions/courses";
 import { Button } from "./ui/button";
+import { toast, Toaster } from "sonner";
 export default function NewCourseForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -30,10 +31,9 @@ export default function NewCourseForm() {
     setLoading(false);
 
     if (error) {
-      console.error("Error creating course:", error.message);
-      alert("Failed to create course.");
+      toast.error("Failed to create course.");
     } else {
-      alert("Course created successfully!");
+      toast.success("Curso criado com sucesso!");
       router.push("/my-courses");
     }
   };

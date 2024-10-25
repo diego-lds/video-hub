@@ -8,6 +8,7 @@ import useFileUpload from "@/app/hooks/useFileUpload";
 import InputVideo from "./FileInput";
 import { Progress } from "./ui/progress";
 import { createClient } from "@/utils/supabase/client";
+import { toast } from "sonner";
 export default function NewLessonForm({ courseId }: { courseId: string }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -26,7 +27,7 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
     if (file.size >= 50 * 1024 * 1024) {
       setFile(null);
-      alert("O arquivo deve ser menor que 50 MB.");
+      toast.warning("O arquivo deve ser menor que 50 MB.");
       return;
     }
 
@@ -49,7 +50,7 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
         setLoading(false);
 
         router.push(`/my-courses/edit-course/${courseId}`);
-        alert("Aula criada com sucesso! " + lessonId);
+        toast.success("Aula criada com sucesso! " + lessonId);
       })
       .catch((error) => {
         console.error("Erro ao enviar o arquivo:", error);
