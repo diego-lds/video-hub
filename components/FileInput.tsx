@@ -14,7 +14,6 @@ const FileInput: React.FC<FileInputProps> = ({ onChange, label }) => {
             onChange(file);
           }}
           type="file"
-          required
           className="w-full text-sm text-slate-700 hover:text-slate-500
         file:mr-4 file:py-2 file:px-5 file:border-0
          file:text-medium file:rounded-l-md

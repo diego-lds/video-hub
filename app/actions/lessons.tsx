@@ -55,6 +55,26 @@ export const createNewLesson = async (formData: FormData) => {
   return { data };
 };
 
+export const deleteLesson = async (lessonId: string) => {
+  const supabase = createClient();
+
+  const { error } = await supabase.from("lessons").delete().eq("id", lessonId);
+
+  if (error) {
+    return { error };
+  }
+
+  const { error: storageError } = await supabase.storage
+    .from("public-videos")
+    .remove([lessonId]);
+
+  if (storageError) {
+    return { error: storageError };
+  }
+
+  return { data: true };
+};
+
 export const getLessonVideoUrl = async (lessonId: string) => {
   const supabase = createClient();
 

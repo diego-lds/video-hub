@@ -12,23 +12,12 @@ interface CourseInfoFormProps {
 const CourseInfo: React.FC<CourseInfoFormProps> = ({
   title,
   description,
-  image,
   setTitle,
   setDescription,
 }) => {
   return (
     <div>
-      <div className="mb-6">
-        <label className=" text-lg font-semibold text-gray-800 mb-2">
-          Foto de capa atual:
-        </label>
-        <Image
-          src={image || "/placeholder.jpg"}
-          alt="Course image"
-          width={200}
-          height={150}
-          className="h-auto w-auto border mb-2"
-        />
+      <div className="mb-6  ">
         <label className=" text-lg font-semibold text-gray-800 mb-2">
           Título:
         </label>

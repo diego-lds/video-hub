@@ -120,7 +120,7 @@ export default function NewCourseForm() {
           </div>
         </div>
       )}
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" size={"lg"} disabled={loading}>
         {loading ? "Creating..." : "Create Course"}
       </Button>
       {successMessage && (
