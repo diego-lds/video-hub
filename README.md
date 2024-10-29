@@ -1,29 +1,11 @@
-```md
-<h1 align="center">Video Hub</h1>
-
-<p align="center">
- Uma plataforma moderna de compartilhamento de vídeos construída com Next.js e Supabase
-</p>
-
-<p align="center">
-  <a href="#funcionalidades"><strong>Funcionalidades</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#tecnologias"><strong>Tecnologias</strong></a> ·
-  <a href="#começando"><strong>Começando</strong></a> ·
-  <a href="#contribuindo"><strong>Contribuindo</strong></a>
-</p>
-<br/>
+Uma plataforma moderna de compartilhamento de vídeo-aulas construída com Next.js e Supabase
 
 ## Funcionalidades
 
 - 🎥 Upload e streaming de vídeos
 - 👥 Autenticação e perfis de usuários
-- 💬 Comentários e interações
 - 📱 Design responsivo
-- 🔍 Funcionalidade de busca
-- 📊 Painel de análises
 - 🎨 Player de vídeo personalizado
-- 🔔 Notificações em tempo real
 
 ## Tecnologias
 
@@ -52,6 +34,7 @@
 3. Configure as variáveis de ambiente
 
    Renomeie `.env.local.example` para `.env.local` e atualize:
+
    ```
    NEXT_PUBLIC_SUPABASE_URL=sua_url_supabase
    NEXT_PUBLIC_SUPABASE_ANON_KEY=sua_chave_anonima_supabase
@@ -78,14 +61,6 @@ video-hub/
 ├── types/
 └── utils/
 ```
-
-## Contribuindo
-
-1. Faça um Fork do repositório
-2. Crie sua branch de feature (`git checkout -b feature/NovaFuncionalidade`)
-3. Faça commit das suas alterações (`git commit -m 'Adiciona nova funcionalidade'`)
-4. Faça Push para a branch (`git push origin feature/NovaFuncionalidade`)
-5. Abra um Pull Request
 
 ## Funcionalidades Planejadas
 
