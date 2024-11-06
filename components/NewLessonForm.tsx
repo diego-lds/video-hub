@@ -22,7 +22,6 @@ export default function NewLessonForm({ courseId }: { courseId: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(file);
     if (!file) return;
 
     if (file.size >= 50 * 1024 * 1024) {

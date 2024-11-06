@@ -6,7 +6,7 @@ export const getCourseTopicsAction = async (courseId: string) => {
   const supabase = createClient();
 
   const { data, error } = await supabase
-    .from("learning_topics")
+    .from("topics")
     .select("*")
     .eq("course_id", courseId);
 
@@ -24,7 +24,7 @@ export const addNewTopic = async (formData: FormData) => {
   const course_id = formData.get("course_id") as string;
 
   const { data, error } = await supabase
-    .from("learning_topics")
+    .from("topics")
     .insert({ topic, course_id })
     .select();
 
@@ -39,7 +39,7 @@ export const deleteTopic = async (topicId: string) => {
   const supabase = createClient();
 
   const { error } = await supabase
-    .from("learning_topics")
+    .from("topics")
     .delete()
     .eq("id", topicId);
 

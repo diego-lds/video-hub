@@ -3,20 +3,47 @@ import { getLessonsAction } from "@/app/actions/lessons";
 import { getCourseTopicsAction } from "@/app/actions/topics";
 import EditCourseForm from "@/components/EditCourseForm";
 
+
 export default async function EditCourse({
   params,
 }: {
   params: { id: string };
 }) {
-  const { data: course } = await getCourseAction(params?.id);
-  const { data: lessons } = await getLessonsAction(params?.id);
-  const { data: topics } = await getCourseTopicsAction(params?.id);
+  const course = await getCourse(params?.id);
+  const lessons = await getLessons(params?.id);
+  const topics= await getTopics(params?.id);
+
+
 
   return (
-    <div className=" ">
+    <>
       {course && lessons && topics && (
         <EditCourseForm course={course} lessons={lessons} topics={topics} />
       )}
-    </div>
+    </>
   );
+}
+
+async function getCourse(id: string) {
+  const { data,error } = await getCourseAction(id);
+  if(error){
+    console.error(error)
+  }
+  return data;
+}
+
+async function getLessons(id: string) {
+  const { data, error } = await getLessonsAction(id);
+  if(error){
+    console.error(error)
+  }
+  return data;
+}
+
+async function getTopics(id: string) {
+  const { data, error } = await getCourseTopicsAction(id);
+  if(error){
+    console.error(error)
+  }
+  return data;
 }

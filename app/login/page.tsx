@@ -26,7 +26,6 @@ export default function Login({
       return redirect("/login?message=Could not authenticate user");
     }
 
-    console.log("Usuário logado com sucesso!");
     return redirect("/");
   };
 

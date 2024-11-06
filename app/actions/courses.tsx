@@ -22,12 +22,11 @@ export const getMyCoursesAction = async () => {
   const { data, error } = await supabase
     .from("courses")
     .select("*")
-    .eq("owner", user?.id);
+    .eq("owner_id", user?.id);
 
   if (error) {
     return { error };
   }
-
   return { data };
 };
 
@@ -44,7 +43,7 @@ export const createCourse = async (formData: FormData) => {
 
   const { data: courseData, error: courseError } = await supabase
     .from("courses")
-    .insert({ title, description, owner: user?.id })
+    .insert({ title, description, owner_id: user?.id })
     .select();
 
   if (courseError) {
@@ -89,7 +88,9 @@ export const getCourseAction = async (courseId: string) => {
     .eq("id", courseId)
     .single();
 
+
   if (error) {
+
     return { error };
   }
 
