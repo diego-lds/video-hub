@@ -3,8 +3,9 @@ import React from "react";
 type FileInputProps = {
   onChange: (file: File | null) => void;
   label?: string;
+  name?: string;
 };
-const FileInput: React.FC<FileInputProps> = ({ onChange, label }) => {
+const FileInput: React.FC<FileInputProps> = ({ onChange, label, name }) => {
   return (
     <div className="">
       <div className="border border-slate-700 rounded-lg  hover:border-slate-500">
@@ -14,6 +15,7 @@ const FileInput: React.FC<FileInputProps> = ({ onChange, label }) => {
             onChange(file);
           }}
           type="file"
+          name={name}
           className="w-full text-sm text-slate-700 hover:text-slate-500
         file:mr-4 file:py-2 file:px-5 file:border-0
          file:text-medium file:rounded-l-md

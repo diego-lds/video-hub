@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { createCourse } from "@/app/actions/courses";
 import { Button } from "./ui/button";
 import { toast, Toaster } from "sonner";
+import Input from "./Input";
+import TextArea from "./TextArea";
+import FileInput from "./FileInput";
+import Image from "next/image";
 export default function NewCourseForm() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -38,9 +42,8 @@ export default function NewCourseForm() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+  const handleImageChange = (file: File | null) => {
+    if (file) {
       setImageFile(file);
 
       const reader = new FileReader();
@@ -53,75 +56,40 @@ export default function NewCourseForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-      <div>
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Título
-        </label>
-        <input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          required
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="description"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Descrição
-        </label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          rows={4}
-          required
-        />
-      </div>
+      <Input
+        name="title"
+        label="Título"
+        value={title}
+        required
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <TextArea
+        name="description"
+        label="Descrição"
+        value={description}
+        required
+        onChange={(e) => setDescription(e.target.value)}
+      />
 
-      <div className="mb-4">
-        <label
-          htmlFor="courseImage"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Imagem de capa
-        </label>
-        <input
-          type="file"
-          id="courseImage"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100"
-        />
-      </div>
+      <label>Imagem de capa</label>
+      <FileInput onChange={handleImageChange} name="image" />
+
       {imagePreview && (
         <div className="mb-4">
           <p className="text-sm font-medium text-gray-700 mb-2">
-            Preview da Imagem:
+            Preview da Imagem: {imageFile?.name}
           </p>
-          <div className=" border border-gray-300 rounded-lg overflow-hidden">
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <Image
+            src={imagePreview}
+            alt="Preview"
+            width={250}
+            height={250}
+            className=" object-cover"
+          />
         </div>
       )}
       <Button type="submit" size={"lg"} disabled={loading}>
-        {loading ? "Creating..." : "Create Course"}
+        {loading ? "Criando..." : "Criar curso"}
       </Button>
       {successMessage && (
         <p className="text-green-500 mt-4">{successMessage}</p>

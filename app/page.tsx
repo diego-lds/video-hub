@@ -1,33 +1,21 @@
 import Card from "@/components/Card";
 import Separator from "@/components/Separator";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import { Toaster } from "sonner";
-import { getCoursesAction } from "./actions/courses";
+import { fetchAllCourses } from "./actions/courses";
 
 export default async function Index() {
-  const { data: courses, error: errorCourses } = await getCoursesAction();
-  const supabase = createClient();
-  const { data: {session} } = await supabase.auth.getSession();
-  const { data: {user} } = await supabase.auth.getUser();
+  const { data: courses, error } = await fetchAllCourses();
 
-
-  const expiresAt = new Date((session?.expires_at || 0) * 1000);
-  const secondsToExpire = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
-  
-
-  
-
-  if (errorCourses) {
-    console.error(errorCourses?.message);
+  if (error) {
+    console.error(error);
   }
 
   return (
     <>
       <div className="animate-fade">
-        <p className="text-xs text-red-500">{secondsToExpire} seconds</p>
         <main className="flex flex-col lg:flex-row">
           <Introduction />
         </main>

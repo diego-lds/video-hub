@@ -12,22 +12,39 @@ export const getCoursesAction = async () => {
   return { data };
 };
 
-export const getMyCoursesAction = async () => {
+export const fetchAllCourses = async () => {
+  const supabase = createClient();
+  try {
+    const { data, error } = await supabase.from("courses").select("*");
+    if (error) {
+      return { error };
+    }
+    return { data };
+  } catch (e) {
+    return { error: e };
+  }
+};
+
+export const fetchMyCourses = async () => {
   const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const { data, error } = await supabase
-    .from("courses")
-    .select("*")
-    .eq("owner_id", user?.id);
+    const { data, error } = await supabase
+      .from("courses")
+      .select("*")
+      .eq("owner_id", user?.id);
 
-  if (error) {
-    return { error };
+    if (error) {
+      return { error };
+    }
+    return { data };
+  } catch (e) {
+    return { error: e };
   }
-  return { data };
 };
 
 export const createCourse = async (formData: FormData) => {
