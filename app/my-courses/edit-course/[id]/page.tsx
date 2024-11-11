@@ -1,49 +1,50 @@
-import { getCourseAction } from "@/app/actions/courses";
-import { getLessonsAction } from "@/app/actions/lessons";
-import { getCourseTopicsAction } from "@/app/actions/topics";
-import EditCourseForm from "@/components/EditCourseForm";
-
+import { fetchCourseDetails, getCourseAction } from "@/app/actions/courses";
+import { fetchLessons, getLessonsAction } from "@/app/actions/lessons";
+import { fetchTopics, getCourseTopicsAction } from "@/app/actions/topics";
+import CourseDetails from "@/components/CourseDetails";
+import EditCourseForm from "@/components/CourseDetails";
+import Lessons from "@/components/Lessons";
+import Topics from "@/components/Topics";
 
 export default async function EditCourse({
   params,
 }: {
   params: { id: string };
 }) {
-  const course = await getCourse(params?.id);
-  const lessons = await getLessons(params?.id);
-  const topics= await getTopics(params?.id);
+  const courseId = params?.id.toString();
 
-
+  const lessons = await fetchLessons(params?.id);
+  const details = await fetchCourseDetails(courseId);
+  const topics = await fetchTopics(courseId);
 
   return (
     <>
-      {course && lessons && topics && (
-        <EditCourseForm course={course} lessons={lessons} topics={topics} />
-      )}
+      {renderCourseDetails(details)}
+      {renderLessons(lessons)}
+      {renderTopics(topics)}
     </>
   );
 }
 
-async function getCourse(id: string) {
-  const { data,error } = await getCourseAction(id);
-  if(error){
-    console.error(error)
-  }
-  return data;
+async function renderCourseDetails(details: any) {
+  if (details.error)
+    return (
+      <p className="text-red-500">Erro ao buscas as infomações do curso</p>
+    );
+
+  return <CourseDetails course={details.data} />;
 }
 
-async function getLessons(id: string) {
-  const { data, error } = await getLessonsAction(id);
-  if(error){
-    console.error(error)
-  }
-  return data;
+async function renderTopics(topics: any) {
+  if (topics.error)
+    return <p className="text-red-500">Erro ao buscas os tópicos</p>;
+
+  return <Topics data={topics.data} />;
 }
 
-async function getTopics(id: string) {
-  const { data, error } = await getCourseTopicsAction(id);
-  if(error){
-    console.error(error)
-  }
-  return data;
+async function renderLessons(lessons: any) {
+  if (lessons.error)
+    return <p className="text-red-500">Erro ao buscas a lista de aulas</p>;
+
+  return <Lessons data={lessons.data} />;
 }

@@ -15,6 +15,24 @@ export const getLessonsAction = async (id: string) => {
   return { data };
 };
 
+export const fetchLessons = async (id: string) => {
+  const supabase = createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("lessons")
+      .select("*")
+      .eq("course_id", id);
+
+    if (error) {
+      return { error };
+    }
+    return { data };
+  } catch (e) {
+    return { error: e };
+  }
+};
+
 export const createLesson = async (formData: FormData) => {
   const supabase = createClient();
 

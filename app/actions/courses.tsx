@@ -88,13 +88,31 @@ export const getCourseAction = async (courseId: string) => {
     .eq("id", courseId)
     .single();
 
-
   if (error) {
-
     return { error };
   }
 
   return { data };
+};
+
+export const fetchCourseDetails = async (id: string) => {
+  const supabase = createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("courses")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (error) {
+      return { error };
+    }
+
+    return { data };
+  } catch (e) {
+    return { error: e };
+  }
 };
 
 export const updateCourseDetails = async (formData: FormData) => {
