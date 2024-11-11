@@ -2,16 +2,6 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-export const getCoursesAction = async () => {
-  const supabase = createClient();
-
-  const { data, error } = await supabase.from("courses").select("*");
-  if (error) {
-    return { error };
-  }
-  return { data };
-};
-
 export const fetchAllCourses = async () => {
   const supabase = createClient();
   try {
@@ -96,22 +86,6 @@ export const createCourse = async (formData: FormData) => {
   return { data: courseData };
 };
 
-export const getCourseAction = async (courseId: string) => {
-  const supabase = createClient();
-
-  const { data, error } = await supabase
-    .from("courses")
-    .select("*")
-    .eq("id", courseId)
-    .single();
-
-  if (error) {
-    return { error };
-  }
-
-  return { data };
-};
-
 export const fetchCourseDetails = async (id: string) => {
   const supabase = createClient();
 
@@ -154,12 +128,10 @@ export const updateCourseDetails = async (formData: FormData) => {
       .from("thumbnails")
       .upload(`${id}`, image, { upsert: true });
 
-    // Obter a URL pública após o upload
     const { data: publicUrlData } = supabase.storage
       .from("thumbnails")
       .getPublicUrl(`${id}`);
 
-    // Atualizar o curso com a URL da imagem
     const { data: updateData, error: updateError } = await supabase
       .from("courses")
       .update({ image_url: publicUrlData.publicUrl })

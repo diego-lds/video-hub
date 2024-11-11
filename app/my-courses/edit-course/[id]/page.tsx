@@ -1,8 +1,7 @@
-import { fetchCourseDetails, getCourseAction } from "@/app/actions/courses";
-import { fetchLessons, getLessonsAction } from "@/app/actions/lessons";
-import { fetchTopics, getCourseTopicsAction } from "@/app/actions/topics";
+import { fetchCourseDetails } from "@/app/actions/courses";
+import { fetchLessons } from "@/app/actions/lessons";
+import { fetchTopics } from "@/app/actions/topics";
 import CourseDetails from "@/components/CourseDetails";
-import EditCourseForm from "@/components/CourseDetails";
 import Lessons from "@/components/Lessons";
 import Topics from "@/components/Topics";
 

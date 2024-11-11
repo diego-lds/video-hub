@@ -1,15 +1,15 @@
-import { getCourseAction } from "@/app/actions/courses";
-import { getLessonsAction } from "@/app/actions/lessons";
-import { getCourseTopicsAction } from "@/app/actions/topics";
+import { fetchCourseDetails } from "@/app/actions/courses";
+import { fetchLessons } from "@/app/actions/lessons";
+import { fetchTopics } from "@/app/actions/topics";
 import TopicGrid from "@/components/TopicGrid";
 import VideoPlayer from "@/components/VideoPlayer";
 
 const Course = async ({ params }: { params: { id: string } }) => {
   const id = params?.id.toString();
 
-  const { data: course, error: courseError } = await getCourseAction(id);
-  const { data: topics, error: topicsError } = await getCourseTopicsAction(id);
-  const { data: lessons, error: lessonsError } = await getLessonsAction(id);
+  const { data: course, error: courseError } = await fetchCourseDetails(id);
+  const { data: topics, error: topicsError } = await fetchTopics(id);
+  const { data: lessons, error: lessonsError } = await fetchLessons(id);
 
   return (
     <div className="w-full flex mx-0 items-center px-4 sm:px-8 lg:px-16">
@@ -20,9 +20,7 @@ const Course = async ({ params }: { params: { id: string } }) => {
 
         {topics && (
           <section className="mt-3">
-            <ul>
-              <TopicGrid topics={topics} />
-            </ul>
+            <TopicGrid topics={topics} />
           </section>
         )}
 

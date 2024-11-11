@@ -1,10 +1,9 @@
 "use client";
-import { deleteTopic2 } from "@/app/actions/topics";
-import React, { useEffect, useState } from "react";
+import { FC } from "react";
 import Button from "./Button";
 import { Topic } from "@/types";
 
-const Topics: React.FC<{ data: Topic[] | null }> = ({ data }) => {
+const Topics: FC<{ data: Topic[] | null }> = ({ data }) => {
   const topics = data;
 
   return (
